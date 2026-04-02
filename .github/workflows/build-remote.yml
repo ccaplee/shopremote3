@@ -50,6 +50,10 @@ jobs:
           name: bridge-artifact
           path: ./
 
+      - name: Patch bridge for remote-only
+        run: python3 res/patch_bridge.py --remote-only
+        shell: bash
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -122,6 +126,10 @@ jobs:
         with:
           name: bridge-artifact
           path: ./
+
+      - name: Patch bridge for remote-only
+        run: python3 res/patch_bridge.py --remote-only
+        shell: bash
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
@@ -196,6 +204,10 @@ jobs:
         with:
           name: bridge-artifact
           path: ./
+
+      - name: Patch bridge for remote-only
+        run: python3 res/patch_bridge.py --remote-only
+        shell: bash
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
