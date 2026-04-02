@@ -407,7 +407,7 @@ pub enum Data {
     #[cfg(target_os = "windows")]
     PortForwardSessionCount(Option<usize>),
     SocksWs(Option<Box<(Option<config::Socks5Server>, String)>>),
-    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "host-only")))]
+    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(any(feature = "host-only", feature = "remote-only"))))]
     Whiteboard((String, crate::whiteboard::CustomEvent)),
     ControlPermissionsRemoteModify(Option<bool>),
     #[cfg(target_os = "windows")]
