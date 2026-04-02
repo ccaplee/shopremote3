@@ -89,9 +89,9 @@ def patch_bridge_generated(filepath, mode):
     patched_count = 0
     for func_name in excluded:
         wire_name = f"wire_{func_name}"
-        # Match: pub fn wire_session_xxx(... ) {
-        # We need to find the function and replace its body
-        pattern = rf'(pub fn {wire_name}\([^)]*\)\s*\{{)'
+        # bridge_generated.rs uses: fn wire_xxx_impl(...)
+        # Match both patterns: with and without _impl suffix
+        pattern = rf'(fn {wire_name}(?:_impl)?\([^)]*\)\s*\{{)'
         matches = list(re.finditer(pattern, content))
         for match in matches:
             start = match.end()
@@ -136,7 +136,7 @@ def patch_bridge_io(filepath, mode):
     patched_count = 0
     for func_name in excluded:
         wire_name = f"wire_{func_name}"
-        pattern = rf'(pub fn {wire_name}\([^)]*\)\s*\{{)'
+        pattern = rf'(pub extern "C" fn {wire_name}\([^)]*\)\s*\{{)'
         matches = list(re.finditer(pattern, content))
         for match in matches:
             start = match.end()
