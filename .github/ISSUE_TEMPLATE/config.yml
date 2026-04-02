@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 기능 요청
+    url: https://github.com/ccaplee/shopremote2/discussions/categories/feature-request
+    about: 새로운 기능이나 개선 사항에 대해 논의합니다
+  - name: 질문하기
+    url: https://github.com/ccaplee/shopremote2/discussions/category_choices
+    about: 질문을 하고 다른 커뮤니티 멤버와 논의합니다

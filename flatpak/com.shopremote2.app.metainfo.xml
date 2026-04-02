@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.shopremote2.app</id>
+  <developer id="com.shopremote2">
+    <name>ShopRemote2</name>
+  </developer>
+  <launchable type="desktop-id">com.shopremote2.app.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+  <name>ShopRemote2</name>
+  <summary>안전한 원격 데스크톱 접속</summary>
+  <description>
+    <p>
+        ShopRemote2는 자체 호스팅과 보안을 위한 완전한 기능의 오픈소스 원격 제어 솔루션입니다. 최소한의 설정으로 바로 사용할 수 있습니다.
+    </p>
+    <ul>
+      <li>Windows, macOS, Linux, iOS, Android, Web 지원</li>
+      <li>VP8 / VP9 / AV1 소프트웨어 코덱 및 H264 / H265 하드웨어 코덱 지원</li>
+      <li>자체 인프라에서 셀프 호스팅 솔루션을 쉽게 구축</li>
+      <li>NaCl 기반 종단간 암호화 P2P 연결</li>
+      <li>Windows에서 관리자 권한이나 설치 불필요</li>
+    </ul>
+    <p>
+        셀프 호스팅 설정 방법은 홈페이지를 참조하세요.
+    </p>
+  </description>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <screenshots>
+    <screenshot type="default">
+      <caption>원격 데스크톱 세션</caption>
+      <image>https://raw.githubusercontent.com/ccaplee/shopremote2/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png</image>
+    </screenshot>
+  </screenshots>
+  <branding>
+    <color type="primary" scheme_preference="light">#e0f5f0</color>
+    <color type="primary" scheme_preference="dark">#00B894</color>
+  </branding>
+  <url type="homepage">https://ai.ilv.co.kr</url>
+  <url type="bugtracker">https://github.com/ccaplee/shopremote2/issues</url>
+  <url type="faq">https://github.com/ccaplee/shopremote2/wiki/FAQ</url>
+  <url type="help">https://ai.ilv.co.kr/docs</url>
+  <url type="vcs-browser">https://github.com/ccaplee/shopremote2</url>
+  <url type="translate">https://github.com/ccaplee/shopremote2/tree/master/src/lang</url>
+  <url type="contribute">https://github.com/ccaplee/shopremote2/blob/master/docs/CONTRIBUTING.md</url>
+  <url type="contact">https://ai.ilv.co.kr</url>
+  <requires>
+    <display_length compare="ge">600</display_length>
+    <internet>always</internet>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+  <content_rating type="oars-1.1"/>
+</component>

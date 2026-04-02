@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+case $1 in
+    purge)
+		rm -rf /root/.config/shopremote2 || true
+        ;;
+esac
+
+exit 0
