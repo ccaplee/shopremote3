@@ -57,9 +57,9 @@ pub fn is_xfce() -> bool {
 }
 
 pub fn breakdown_callback() {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     crate::input_service::clear_remapped_keycode();
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
     crate::input_service::release_device_modifiers();
 }
 

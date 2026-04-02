@@ -16,7 +16,7 @@ pub fn start_tray() {
         }
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     crate::server::check_zombie();
 
     allow_err!(make_tray());
@@ -98,11 +98,14 @@ fn make_tray() -> hbb_common::ResultType<()> {
         #[cfg(target_os = "linux")]
         {
             // "xdg-open"을 사용하지 마십시오. 설정을 읽지 않습니다.
+            #[cfg(not(feature = "remote-only"))]
             if crate::dbus::invoke_new_connection(crate::get_uri_prefix()).is_err() {
                 if let Ok(task) = crate::run_me::<&str>(vec![]) {
                     crate::server::CHILD_PROCESS.lock().unwrap().push(task);
                 }
             }
+            #[cfg(feature = "remote-only")]
+            { crate::run_me::<&str>(vec![]).ok(); }
         }
     };
 

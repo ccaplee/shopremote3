@@ -1506,7 +1506,7 @@ pub fn send_clipboard_msg(msg: Message, _is_file: bool) {
 }
 
 // Server Side
-#[cfg(not(any(target_os = "ios")))]
+#[cfg(all(not(any(target_os = "ios")), not(feature = "remote-only")))]
 pub mod connection_manager {
     use std::collections::HashMap;
 

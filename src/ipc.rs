@@ -407,7 +407,7 @@ pub enum Data {
     #[cfg(target_os = "windows")]
     PortForwardSessionCount(Option<usize>),
     SocksWs(Option<Box<(Option<config::Socks5Server>, String)>>),
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "host-only")))]
     Whiteboard((String, crate::whiteboard::CustomEvent)),
     ControlPermissionsRemoteModify(Option<bool>),
     #[cfg(target_os = "windows")]
@@ -524,9 +524,11 @@ impl Drop for CheckIfRestart {
             }
             RendezvousMediator::restart();
         }
+        #[cfg(not(feature = "remote-only"))]
         if self.audio_input != Config::get_option("audio-input") {
             crate::audio_service::restart();
         }
+        #[cfg(not(feature = "remote-only"))]
         if self.voice_call_input != Config::get_option("voice-call-input") {
             crate::audio_service::set_voice_call_input_device(
                 Some(Config::get_option("voice-call-input")),
@@ -547,11 +549,12 @@ async fn handle(data: Data, stream: &mut Connection) {
             );
             allow_err!(stream.send(&Data::SystemInfo(Some(info))).await);
         }
+        #[cfg(not(feature = "remote-only"))]
         Data::ClickTime(_) => {
             let t = crate::server::CLICK_TIME.load(Ordering::SeqCst);
             allow_err!(stream.send(&Data::ClickTime(t)).await);
         }
-        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
         Data::MouseMoveTime(_) => {
             let t = crate::server::MOUSE_MOVE_TIME.load(Ordering::SeqCst);
             allow_err!(stream.send(&Data::MouseMoveTime(t)).await);
@@ -559,7 +562,7 @@ async fn handle(data: Data, stream: &mut Connection) {
         Data::Close => {
             log::info!("Receive close message");
             if EXIT_RECV_CLOSE.load(Ordering::SeqCst) {
-                #[cfg(not(target_os = "android"))]
+                #[cfg(all(not(target_os = "android"), not(feature = "remote-only")))]
                 crate::server::input_service::fix_key_down_timeout_at_exit();
                 if is_server() {
                     let _ = privacy_mode::turn_off_privacy(0, Some(PrivacyModeState::OffByPeer));
@@ -635,7 +638,7 @@ async fn handle(data: Data, stream: &mut Connection) {
             }
             _ => {}
         },
-        #[cfg(feature = "flutter")]
+        #[cfg(all(feature = "flutter", not(feature = "remote-only")))]
         Data::VideoConnCount(None) => {
             let n = crate::server::AUTHED_CONNS
                 .lock()
@@ -678,7 +681,10 @@ async fn handle(data: Data, stream: &mut Connection) {
                         None
                     };
                 } else if name == "voice-call-input" {
-                    value = crate::audio_service::get_voice_call_input_device();
+                    #[cfg(not(feature = "remote-only"))]
+                    { value = crate::audio_service::get_voice_call_input_device(); }
+                    #[cfg(feature = "remote-only")]
+                    { value = None; }
                 } else if name == "unlock-pin" {
                     value = Some(Config::get_unlock_pin());
                 } else if name == "trusted-devices" {
@@ -699,6 +705,7 @@ async fn handle(data: Data, stream: &mut Connection) {
                 } else if name == "salt" {
                     Config::set_salt(&value);
                 } else if name == "voice-call-input" {
+                    #[cfg(not(feature = "remote-only"))]
                     crate::audio_service::set_voice_call_input_device(Some(value), true);
                 } else if name == "unlock-pin" {
                     Config::set_unlock_pin(&value);
@@ -756,6 +763,7 @@ async fn handle(data: Data, stream: &mut Connection) {
         Data::TestRendezvousServer => {
             crate::test_rendezvous_server();
         }
+        #[cfg(not(feature = "remote-only"))]
         Data::SwitchSidesRequest(id) => {
             let uuid = uuid::Uuid::new_v4();
             crate::server::insert_switch_sides_uuid(id, uuid.clone());
@@ -768,7 +776,7 @@ async fn handle(data: Data, stream: &mut Connection) {
         #[cfg(all(feature = "flutter", feature = "plugin_framework"))]
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         Data::Plugin(plugin) => crate::plugin::ipc::handle_plugin(plugin, stream).await,
-        #[cfg(windows)]
+        #[cfg(all(windows, not(feature = "remote-only")))]
         Data::ControlledSessionCount(_) => {
             allow_err!(
                 stream
@@ -785,7 +793,7 @@ async fn handle(data: Data, stream: &mut Connection) {
         Data::ControllingSessionCount(count) => {
             crate::updater::update_controlling_session_count(count);
         }
-        #[cfg(target_os = "linux")]
+        #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
         Data::TerminalSessionCount(_) => {
             let count = crate::terminal_service::get_terminal_session_count(true);
             allow_err!(stream.send(&Data::TerminalSessionCount(count)).await);
@@ -871,7 +879,7 @@ async fn handle(data: Data, stream: &mut Connection) {
                 // This branch is left blank for unification and further use.
             }
         },
-        #[cfg(target_os = "windows")]
+        #[cfg(all(target_os = "windows", not(feature = "remote-only")))]
         Data::PortForwardSessionCount(c) => match c {
             None => {
                 let count = crate::server::AUTHED_CONNS
@@ -890,6 +898,7 @@ async fn handle(data: Data, stream: &mut Connection) {
                 // Port forward session count is only a get value.
             }
         },
+        #[cfg(not(feature = "remote-only"))]
         Data::ControlPermissionsRemoteModify(_) => {
             use hbb_common::rendezvous_proto::control_permissions::Permission;
             let state =
@@ -900,7 +909,7 @@ async fn handle(data: Data, stream: &mut Connection) {
                     .await
             );
         }
-        #[cfg(target_os = "windows")]
+        #[cfg(all(target_os = "windows", not(feature = "remote-only")))]
         Data::FileTransferEnabledState(_) => {
             use hbb_common::rendezvous_proto::control_permissions::Permission;
             let state = crate::server::get_control_permission_state(Permission::file, false);
@@ -926,6 +935,7 @@ pub async fn connect(ms_timeout: u64, postfix: &str) -> ResultType<ConnectionTmp
 }
 
 #[cfg(target_os = "linux")]
+#[cfg(not(feature = "remote-only"))]
 #[tokio::main(flavor = "current_thread")]
 pub async fn start_pa() {
     use crate::audio_service::AUDIO_DATA_SIZE_U8;

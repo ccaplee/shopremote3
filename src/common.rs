@@ -146,9 +146,9 @@ impl Drop for SimpleCallOnReturn {
 /// # 반환
 /// 항상 true를 반환한다.
 pub fn global_init() -> bool {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     {
-        // Linux: X11이 아닌 경우 Wayland 초기화
+        // Linux: X11이 아닌 경우 Wayland 초기화 (서버 측 기능 - remote-only 제외)
         if !crate::platform::linux::is_x11() {
             crate::server::wayland::init();
         }

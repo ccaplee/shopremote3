@@ -1,4 +1,5 @@
-// 키보드 입력 처리 모듈
+// 키보드 입력 처리 모듈 (뷰어 측 전용 - host-only 빌드에서 제외)
+#[cfg(not(feature = "host-only"))]
 mod keyboard;
 /// cbindgen:ignore
 // 플랫폼별 기능을 제공하는 모듈 (Windows, macOS, Linux 등)
@@ -16,8 +17,7 @@ mod server;
 #[cfg(not(any(target_os = "ios")))]
 #[cfg(not(feature = "remote-only"))]
 pub use self::server::*;
-// 원격 접속 클라이언트 기능 모듈
-#[cfg(not(feature = "host-only"))]
+// 원격 접속 클라이언트 기능 모듈 (공유 상수/타입도 포함하므로 host-only에서도 포함)
 mod client;
 // 로컬 네트워크(LAN) 발견 모듈
 mod lan;

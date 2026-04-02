@@ -444,7 +444,7 @@ pub fn set_option(key: String, value: String) {
             }
         }
     } else if &key == "audio-input" {
-        #[cfg(not(target_os = "ios"))]
+        #[cfg(all(not(target_os = "ios"), not(feature = "remote-only")))]
         crate::audio_service::restart();
     }
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -679,7 +679,10 @@ pub fn get_error() -> String {
     {
         let dtype = crate::platform::linux::get_display_server();
         if crate::platform::linux::DISPLAY_SERVER_WAYLAND == dtype {
+            #[cfg(not(feature = "remote-only"))]
             return crate::server::wayland::common_get_error();
+            #[cfg(feature = "remote-only")]
+            return String::new();
         }
         if dtype != crate::platform::linux::DISPLAY_SERVER_X11 {
             return format!(
@@ -1196,6 +1199,7 @@ async fn check_connect_status_(reconnect: bool, rx: mpsc::UnboundedReceiver<ipc:
                         match res {
                             Err(err) => {
                                 log::error!("ipc connection closed: {}", err);
+                                #[cfg(not(feature = "remote-only"))]
                                 if is_cm {
                                     crate::ui_cm_interface::quit_cm();
                                 }

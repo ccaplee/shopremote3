@@ -48,8 +48,14 @@ pub fn stop_auto_update() {
 
 #[inline]
 fn has_no_active_conns() -> bool {
-    let conns = crate::Connection::alive_conns();
-    conns.is_empty() && has_no_controlling_conns()
+    #[cfg(not(feature = "remote-only"))]
+    {
+        let conns = crate::Connection::alive_conns();
+        if !conns.is_empty() {
+            return false;
+        }
+    }
+    has_no_controlling_conns()
 }
 
 #[cfg(any(not(target_os = "windows"), feature = "flutter"))]

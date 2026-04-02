@@ -1,7 +1,9 @@
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 use crate::clipboard::{update_clipboard, ClipboardSide};
+#[cfg(all(not(any(target_os = "ios")), not(feature = "remote-only")))]
+use crate::{audio_service, ConnInner, CLIENT_SERVER};
 #[cfg(not(any(target_os = "ios")))]
-use crate::{audio_service, clipboard::CLIPBOARD_INTERVAL, ConnInner, CLIENT_SERVER};
+use crate::clipboard::CLIPBOARD_INTERVAL;
 use crate::{
     client::{
         self, new_voice_call_request, Client, Data, Interface, MediaData, MediaSender,
@@ -451,8 +453,8 @@ impl<T: InvokeUiSession> Remote<T> {
         {
             return None;
         }
-        // iOS does not have this server.
-        #[cfg(not(any(target_os = "ios")))]
+        // iOS and remote-only builds do not have the local audio server.
+        #[cfg(all(not(any(target_os = "ios")), not(feature = "remote-only")))]
         {
             // 주의:
             // The client server and --server both use the same sound input device.
@@ -517,7 +519,7 @@ impl<T: InvokeUiSession> Remote<T> {
             });
             return Some(tx);
         }
-        #[cfg(target_os = "ios")]
+        #[cfg(any(target_os = "ios", feature = "remote-only"))]
         {
             None
         }

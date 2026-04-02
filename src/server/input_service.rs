@@ -6,6 +6,7 @@ use super::rdp_input::client::{RdpInputKeyboard, RdpInputMouse};
 use super::*;
 use crate::input::*;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
+#[cfg(not(feature = "host-only"))]
 use crate::whiteboard;
 #[cfg(target_os = "macos")]
 use dispatch::Queue;
@@ -1039,7 +1040,7 @@ pub fn handle_mouse_(
     if simulate {
         handle_mouse_simulation_(evt, conn);
     }
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "host-only")))]
     {
         let evt_type = evt.mask & MOUSE_TYPE_MASK;
         // Relative (delta) mouse events do not include absolute coordinates, so
@@ -1225,6 +1226,7 @@ pub fn handle_mouse_simulation_(evt: &MouseEvent, conn: i32) {
 }
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
+#[cfg(not(feature = "host-only"))]
 pub fn handle_mouse_show_cursor_(evt: &MouseEvent, conn: i32, username: String, argb: u32) {
     let buttons = evt.mask >> 3;
     let evt_type = evt.mask & MOUSE_TYPE_MASK;

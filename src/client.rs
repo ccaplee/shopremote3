@@ -34,8 +34,9 @@ use crate::{
     kcp_stream::KcpStream,
     secure_tcp,
     ui_interface::{get_builtin_option, resolve_avatar_url, use_texture_render},
-    ui_session_interface::{InvokeUiSession, Session},
 };
+#[cfg(not(feature = "host-only"))]
+use crate::ui_session_interface::{InvokeUiSession, Session};
 #[cfg(feature = "unix-file-copy-paste")]
 use crate::{clipboard::check_clipboard_files, clipboard_file::unix_file_clip};
 pub use file_trait::FileManager;
@@ -85,6 +86,7 @@ use crate::clipboard::CLIPBOARD_INTERVAL;
 use crate::clipboard::{check_clipboard, ClipboardSide};
 #[cfg(not(feature = "flutter"))]
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
+#[cfg(not(feature = "host-only"))]
 use crate::ui_session_interface::SessionPermissionConfig;
 
 pub use super::lang::*;
@@ -135,12 +137,18 @@ pub(crate) struct ClientClipboardContext;
 
 #[cfg(not(feature = "flutter"))]
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
+#[cfg(not(feature = "host-only"))]
 pub(crate) struct ClientClipboardContext {
     pub cfg: SessionPermissionConfig,
     pub tx: UnboundedSender<Data>,
     #[cfg(feature = "unix-file-copy-paste")]
     pub is_file_supported: bool,
 }
+
+#[cfg(not(feature = "flutter"))]
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+#[cfg(feature = "host-only")]
+pub(crate) struct ClientClipboardContext;
 
 /// Client of the remote desktop.
 pub struct Client;
@@ -2788,8 +2796,8 @@ pub enum MediaData {
 
 pub type MediaSender = mpsc::Sender<MediaData>;
 
-/// Start video thread.
-///
+/// Start video thread (remote side only, not needed in host-only builds).
+#[cfg(not(feature = "host-only"))]
 /// # Arguments
 ///
 /// * `video_callback` - The callback for video frame. Being called when a video frame is ready.

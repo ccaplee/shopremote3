@@ -5,7 +5,9 @@ use std::{
 };
 
 #[cfg(not(any(target_os = "ios")))]
-use crate::{ui_interface::get_builtin_option, Connection};
+use crate::ui_interface::get_builtin_option;
+#[cfg(all(not(any(target_os = "ios")), not(feature = "remote-only")))]
+use crate::Connection;
 use hbb_common::{
     config::{self, keys, Config, LocalConfig},
     log,
@@ -134,7 +136,10 @@ async fn start_hbbs_sync_async() {
                     continue;
                 }
                 // 활성 연결 목록 조회
+                #[cfg(not(feature = "remote-only"))]
                 let conns = Connection::alive_conns();
+                #[cfg(feature = "remote-only")]
+                let conns: Vec<i32> = vec![];
                 // URL 또는 기기 ID가 변경되었으면 다시 업로드
                 if info_uploaded.uploaded && (url != info_uploaded.url || id != info_uploaded.id) {
                     info_uploaded.uploaded = false;

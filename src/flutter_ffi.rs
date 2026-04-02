@@ -1048,14 +1048,14 @@ pub fn main_show_option(_key: String) -> SyncReturn<bool> {
 }
 
 pub fn main_set_option(key: String, value: String) {
-    #[cfg(target_os = "android")]
+    #[cfg(all(target_os = "android", not(feature = "remote-only")))]
     if key.eq(config::keys::OPTION_ENABLE_KEYBOARD) {
         crate::ui_cm_interface::switch_permission_all(
             "keyboard".to_owned(),
             config::option2bool(&key, &value),
         );
     }
-    #[cfg(target_os = "android")]
+    #[cfg(all(target_os = "android", not(feature = "remote-only")))]
     if key.eq(config::keys::OPTION_ENABLE_CLIPBOARD) {
         crate::ui_cm_interface::switch_permission_all(
             "clipboard".to_owned(),
@@ -1733,16 +1733,18 @@ pub fn session_get_conn_token(session_id: SessionID) -> SyncReturn<Option<String
     }
 }
 
+#[cfg(not(feature = "remote-only"))]
 pub fn cm_handle_incoming_voice_call(id: i32, accept: bool) {
     crate::ui_cm_interface::handle_incoming_voice_call(id, accept);
 }
 
+#[cfg(not(feature = "remote-only"))]
 pub fn cm_close_voice_call(id: i32) {
     crate::ui_cm_interface::close_voice_call(id);
 }
 
 pub fn set_voice_call_input_device(_is_cm: bool, _device: String) {
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
     if _is_cm {
         let _ = crate::ipc::set_config("voice-call-input", _device);
     } else {
@@ -1751,7 +1753,7 @@ pub fn set_voice_call_input_device(_is_cm: bool, _device: String) {
 }
 
 pub fn get_voice_call_input_device(_is_cm: bool) -> String {
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
     if _is_cm {
         match crate::ipc::get_config("voice-call-input") {
             Ok(Some(device)) => device,
@@ -1853,7 +1855,7 @@ pub fn get_double_click_time() -> SyncReturn<i32> {
 }
 
 pub fn main_start_dbus_server() {
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     {
         use crate::dbus::start_dbus_server;
         // spawn new thread to start dbus server
@@ -2478,7 +2480,7 @@ pub fn cm_init() {
 /// * Should only be called in the main flutter window.
 /// * macOS only
 pub fn main_start_ipc_url_server() {
-    #[cfg(target_os = "macos")]
+    #[cfg(all(target_os = "macos", not(feature = "remote-only")))]
     std::thread::spawn(move || crate::server::start_ipc_url_server());
 }
 
@@ -2831,8 +2833,10 @@ pub fn session_request_new_display_init_msgs(session_id: SessionID, display: usi
 pub fn main_audio_support_loopback() -> SyncReturn<bool> {
     #[cfg(target_os = "windows")]
     let is_surpport = true;
-    #[cfg(feature = "screencapturekit")]
+    #[cfg(all(feature = "screencapturekit", not(feature = "remote-only")))]
     let is_surpport = crate::audio_service::is_screen_capture_kit_available();
+    #[cfg(all(feature = "screencapturekit", feature = "remote-only"))]
+    let is_surpport = false;
     #[cfg(not(any(target_os = "windows", feature = "screencapturekit")))]
     let is_surpport = false;
     SyncReturn(is_surpport)
@@ -3081,7 +3085,7 @@ pub fn session_get_common(
     }
 }
 
-#[cfg(target_os = "android")]
+#[cfg(all(target_os = "android", not(feature = "remote-only")))]
 pub mod server_side {
     use hbb_common::{config, log};
     use jni::{

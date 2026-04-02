@@ -3983,7 +3983,7 @@ impl Connection {
                 self.update_terminal_persistence(q == BoolOption::Yes).await;
             }
         }
-        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "host-only")))]
         if let Ok(q) = o.show_my_cursor.enum_value() {
             if q != BoolOption::NotSet {
                 use crate::whiteboard;
@@ -5523,7 +5523,7 @@ mod raii {
                 scrap::wayland::pipewire::try_close_session();
             }
             Self::check_wake_lock();
-            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "host-only")))]
             {
                 use crate::whiteboard;
                 whiteboard::unregister_whiteboard(whiteboard::get_key_cursor(self.0));

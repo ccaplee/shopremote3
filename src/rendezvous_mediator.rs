@@ -26,10 +26,9 @@ use hbb_common::{
     AddrMangle, IntoTargetAddr, ResultType, Stream, TargetAddr,
 };
 
-use crate::{
-    check_port,
-    server::{check_zombie, new as new_server, ServerPtr},
-};
+use crate::check_port;
+#[cfg(not(feature = "remote-only"))]
+use crate::server::{check_zombie, new as new_server, ServerPtr};
 
 type Message = RendezvousMessage;
 
@@ -69,15 +68,20 @@ impl RendezvousMediator {
         if crate::platform::is_installed() && crate::is_server() {
             crate::updater::start_auto_update();
         }
+        #[cfg(not(feature = "remote-only"))]
         check_zombie();
+        #[cfg(not(feature = "remote-only"))]
         let server = new_server();
         if config::option2bool("stop-service", &Config::get_option("stop-service")) {
             crate::test_rendezvous_server();
         }
-        let server_cloned = server.clone();
-        tokio::spawn(async move {
-            direct_server(server_cloned).await;
-        });
+        #[cfg(not(feature = "remote-only"))]
+        {
+            let server_cloned = server.clone();
+            tokio::spawn(async move {
+                direct_server(server_cloned).await;
+            });
+        }
         #[cfg(target_os = "android")]
         let start_lan_listening = true;
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -93,6 +97,8 @@ impl RendezvousMediator {
             crate::platform::linux_desktop_manager::start_xdesktop();
         }
         scrap::codec::test_av1();
+        // remote-only 빌드에서는 서버 등록 루프를 실행하지 않음
+        #[cfg(not(feature = "remote-only"))]
         loop {
             let timeout = Arc::new(RwLock::new(CONNECT_TIMEOUT));
             let conn_start_time = Instant::now();
@@ -139,6 +145,11 @@ impl RendezvousMediator {
                 sleep(0.033).await;
             }
         }
+        // remote-only: keep running but don't do server registration
+        #[cfg(feature = "remote-only")]
+        loop {
+            sleep(60.).await;
+        }
     }
 
     fn get_host_prefix(host: &str) -> String {
@@ -154,6 +165,7 @@ impl RendezvousMediator {
             .unwrap_or(host.to_owned())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     pub async fn start_udp(server: ServerPtr, host: String) -> ResultType<()> {
         let host = check_port(&host, RENDEZVOUS_PORT);
         log::info!("start udp: {host}");
@@ -266,6 +278,7 @@ impl RendezvousMediator {
         Ok(())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     #[inline]
     async fn handle_resp(
         &mut self,
@@ -339,6 +352,7 @@ impl RendezvousMediator {
         Ok(())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     pub async fn start_tcp(server: ServerPtr, host: String) -> ResultType<()> {
         let host = check_port(&host, RENDEZVOUS_PORT);
         log::info!("start tcp: {}", hbb_common::websocket::check_ws(&host));
@@ -397,6 +411,7 @@ impl RendezvousMediator {
         Ok(())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     pub async fn start(server: ServerPtr, host: String) -> ResultType<()> {
         log::info!("start rendezvous mediator of {}", host);
         //If the investment agent type is http or https, then tcp forwarding is enabled.
@@ -411,6 +426,7 @@ impl RendezvousMediator {
         }
     }
 
+    #[cfg(not(feature = "remote-only"))]
     async fn handle_request_relay(&self, rr: RequestRelay, server: ServerPtr) -> ResultType<()> {
         let addr = AddrMangle::decode(&rr.socket_addr);
         let last = *LAST_RELAY_MSG.lock().await;
@@ -433,6 +449,7 @@ impl RendezvousMediator {
         .await
     }
 
+    #[cfg(not(feature = "remote-only"))]
     async fn create_relay(
         &self,
         socket_addr: Vec<u8>,
@@ -482,6 +499,7 @@ impl RendezvousMediator {
         Ok(())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     async fn handle_intranet(&self, fla: FetchLocalAddr, server: ServerPtr) -> ResultType<()> {
         let addr = AddrMangle::decode(&fla.socket_addr);
         let last = *LAST_MSG.lock().await;
@@ -532,6 +550,7 @@ impl RendezvousMediator {
         .await
     }
 
+    #[cfg(not(feature = "remote-only"))]
     async fn handle_intranet_(
         &self,
         fla: FetchLocalAddr,
@@ -569,6 +588,7 @@ impl RendezvousMediator {
         Ok(())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     async fn handle_punch_hole(&self, ph: PunchHole, server: ServerPtr) -> ResultType<()> {
         let mut peer_addr = AddrMangle::decode(&ph.socket_addr);
         let last = *LAST_MSG.lock().await;
@@ -646,6 +666,7 @@ impl RendezvousMediator {
         Ok(())
     }
 
+    #[cfg(not(feature = "remote-only"))]
     async fn punch_udp_hole(
         &self,
         peer_addr: SocketAddr,
@@ -761,6 +782,7 @@ fn get_direct_port() -> i32 {
     port
 }
 
+#[cfg(not(feature = "remote-only"))]
 async fn direct_server(server: ServerPtr) {
     let mut listener = None;
     let mut port = 0;
@@ -843,6 +865,7 @@ impl Sink<'_> {
     }
 }
 
+#[cfg(not(feature = "remote-only"))]
 async fn start_ipv6(
     peer_addr_v6: SocketAddr,
     peer_addr_v4: SocketAddr,
@@ -869,6 +892,7 @@ async fn start_ipv6(
     Default::default()
 }
 
+#[cfg(not(feature = "remote-only"))]
 async fn udp_nat_listen(
     socket: Arc<tokio::net::UdpSocket>,
     peer_addr: SocketAddr,

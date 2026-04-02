@@ -160,7 +160,7 @@ pub fn core_main() -> Option<Vec<String>> {
     hbb_common::init_log(false, &log_name);
 
     // linux uni (url) go here.
-    #[cfg(all(target_os = "linux", feature = "flutter"))]
+    #[cfg(all(target_os = "linux", feature = "flutter", not(feature = "remote-only")))]
     if args.len() > 0 && args[0].starts_with(&crate::get_uri_prefix()) {
         return try_send_by_dbus(args[0].clone());
     }
@@ -633,7 +633,7 @@ pub fn core_main() -> Option<Vec<String>> {
         } else if args[0] == "--terminal-helper" {
             // Terminal helper process - runs as user to create ConPTY
             // This is needed because ConPTY has compatibility issues with CreateProcessAsUserW
-            #[cfg(target_os = "windows")]
+            #[cfg(all(target_os = "windows", not(feature = "remote-only")))]
             {
                 let helper_args: Vec<String> = args[1..].to_vec();
                 if let Err(e) = crate::server::terminal_helper::run_terminal_helper(&helper_args) {
@@ -647,14 +647,14 @@ pub fn core_main() -> Option<Vec<String>> {
             crate::ui_interface::start_option_status_sync();
         } else if args[0] == "--cm-no-ui" {
             #[cfg(feature = "flutter")]
-            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
             {
                 crate::ui_interface::start_option_status_sync();
                 crate::flutter::connection_manager::start_cm_no_ui();
             }
             return None;
         } else if args[0] == "--whiteboard" {
-            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "host-only")))]
             {
                 crate::whiteboard::run();
             }
@@ -794,8 +794,10 @@ fn core_main_invoke_new_connection(mut args: std::env::Args) -> Option<Vec<Strin
         return None;
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     return try_send_by_dbus(uni_links);
+    #[cfg(all(target_os = "linux", feature = "remote-only"))]
+    return None;
 
     #[cfg(windows)]
     {
@@ -819,7 +821,7 @@ fn core_main_invoke_new_connection(mut args: std::env::Args) -> Option<Vec<Strin
     }
 }
 
-#[cfg(all(target_os = "linux", feature = "flutter"))]
+#[cfg(all(target_os = "linux", feature = "flutter", not(feature = "remote-only")))]
 fn try_send_by_dbus(uni_links: String) -> Option<Vec<String>> {
     use crate::dbus::invoke_new_connection;
 

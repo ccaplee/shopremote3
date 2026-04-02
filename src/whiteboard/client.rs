@@ -1,8 +1,7 @@
 use super::{Cursor, CustomEvent};
-use crate::{
-    ipc::{self, Data},
-    CHILD_PROCESS,
-};
+use crate::ipc::{self, Data};
+#[cfg(not(feature = "remote-only"))]
+use crate::CHILD_PROCESS;
 use hbb_common::{
     allow_err,
     anyhow::anyhow,
@@ -183,6 +182,7 @@ async fn start_whiteboard_() -> ResultType<()> {
                 sleep(1.).await;
             }
             if let Some(task) = res? {
+                #[cfg(not(feature = "remote-only"))]
                 CHILD_PROCESS.lock().unwrap().push(task);
             }
             run_done = true;
@@ -191,6 +191,7 @@ async fn start_whiteboard_() -> ResultType<()> {
         }
         if !run_done {
             log::debug!("Start whiteboard");
+            #[cfg(not(feature = "remote-only"))]
             CHILD_PROCESS.lock().unwrap().push(crate::run_me(args)?);
         }
         for _ in 0..20 {

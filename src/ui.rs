@@ -12,7 +12,7 @@ use hbb_common::{
     log,
 };
 
-#[cfg(not(any(feature = "flutter", feature = "cli")))]
+#[cfg(not(any(feature = "flutter", feature = "cli", feature = "host-only")))]
 use crate::ui_session_interface::Session;
 use crate::{common::get_app_name, ipc, ui_interface::*};
 
@@ -392,6 +392,7 @@ impl UI {
     }
 
     fn closing(&mut self, x: i32, y: i32, w: i32, h: i32) {
+        #[cfg(not(feature = "remote-only"))]
         crate::server::input_service::fix_key_down_timeout_at_exit();
         LocalConfig::set_size(x, y, w, h);
     }
