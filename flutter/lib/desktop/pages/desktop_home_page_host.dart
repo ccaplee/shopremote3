@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shopremote2/common.dart';
 import 'package:shopremote2/consts.dart';
+import 'package:shopremote2/models/platform_model.dart';
 import 'package:shopremote2/desktop/pages/desktop_setting_page.dart';
 import 'package:shopremote2/desktop/pages/desktop_tab_page.dart';
 import 'package:shopremote2/models/server_model.dart';
