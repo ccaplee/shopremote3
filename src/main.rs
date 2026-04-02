@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use libshopremote2::*;
+use libshopremote3::*;
 
 /// Android 및 iOS 플랫폼이나 Flutter 기능이 활성화되었을 때의 메인 함수
 /// 전역 초기화, 랑데뷰 서버 테스트, NAT 타입 테스트를 수행한 후 전역 정리를 진행한다.

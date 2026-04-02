@@ -1,4 +1,4 @@
-use libshopremote2::*;
+use libshopremote3::*;
 
 #[cfg(not(target_os = "macos"))]
 fn main() {}
