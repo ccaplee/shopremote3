@@ -135,6 +135,13 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
+      - name: Install nasm
+        run: |
+          wget https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/macosx/nasm-2.16.03-macosx.zip
+          unzip nasm-2.16.03-macosx.zip
+          sudo cp nasm-2.16.03/nasm /usr/local/bin/nasm
+          nasm --version
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
@@ -210,7 +217,7 @@ jobs:
             libsystemd-dev libva-dev libva-drm2 libva-x11-2 \
             libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             libgstreamer-plugins-base1.0-0 libpam0g libpam0g-dev \
-            libgstreamer1.0-0
+            libgstreamer1.0-0 nasm
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
