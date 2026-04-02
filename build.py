@@ -335,7 +335,7 @@ def build_flutter_deb(version, features, host_only=False, remote_only=False):
         ffi_bindgen_function_refactor()
     os.chdir('flutter')
     dart_entrypoint = 'lib/main_host.dart' if host_only else ('lib/main_remote.dart' if remote_only else '')
-    entrypoint_arg = f'--dart-entrypoint {dart_entrypoint}' if (host_only or remote_only) else ''
+    entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build linux --release {entrypoint_arg}')
     system2('mkdir -p tmpdeb/usr/bin/')
     system2('mkdir -p tmpdeb/usr/share/shopremote3')
@@ -428,7 +428,7 @@ def build_flutter_dmg(version, features, host_only=False, remote_only=False):
         "cp target/release/liblibshopremote3.dylib target/release/libshopremote3.dylib")
     os.chdir('flutter')
     dart_entrypoint = 'lib/main_host.dart' if host_only else ('lib/main_remote.dart' if remote_only else '')
-    entrypoint_arg = f'--dart-entrypoint {dart_entrypoint}' if (host_only or remote_only) else ''
+    entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build macos --release {entrypoint_arg}')
     system2('cp -rf ../target/release/service ./build/macos/Build/Products/Release/ShopRemote3.app/Contents/MacOS/')
     '''
@@ -445,7 +445,7 @@ def build_flutter_arch_manjaro(version, features, host_only=False, remote_only=F
     ffi_bindgen_function_refactor()
     os.chdir('flutter')
     dart_entrypoint = 'lib/main_host.dart' if host_only else ('lib/main_remote.dart' if remote_only else '')
-    entrypoint_arg = f'--dart-entrypoint {dart_entrypoint}' if (host_only or remote_only) else ''
+    entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build linux --release {entrypoint_arg}')
     system2(f'strip {flutter_build_dir}/lib/libshopremote3.so')
     os.chdir('../res')
@@ -460,7 +460,7 @@ def build_flutter_windows(version, features, skip_portable_pack, host_only=False
             exit(-1)
     os.chdir('flutter')
     dart_entrypoint = 'lib/main_host.dart' if host_only else ('lib/main_remote.dart' if remote_only else '')
-    entrypoint_arg = f'--dart-entrypoint {dart_entrypoint}' if (host_only or remote_only) else ''
+    entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build windows --release {entrypoint_arg}')
     os.chdir('..')
     shutil.copy2('target/release/deps/dylib_virtual_display.dll',
