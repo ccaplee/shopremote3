@@ -10,8 +10,9 @@ use crate::{
         QualityStatus, MILLI1, SEC30,
     },
     common::get_default_sound_input,
-    ui_session_interface::{InvokeUiSession, Session},
 };
+#[cfg(not(feature = "host-only"))]
+use crate::ui_session_interface::{InvokeUiSession, Session};
 #[cfg(feature = "unix-file-copy-paste")]
 use crate::{clipboard::try_empty_clipboard_files, clipboard_file::unix_file_clip};
 #[cfg(any(

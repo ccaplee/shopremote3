@@ -1,6 +1,9 @@
 #[cfg(any(target_os = "windows", target_os = "macos"))]
 #[cfg(not(feature = "host-only"))]
 use crate::client::translate;
+#[cfg(any(target_os = "windows", target_os = "macos"))]
+#[cfg(feature = "host-only")]
+fn translate(s: String) -> String { s }
 #[cfg(not(debug_assertions))]
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 use crate::platform::breakdown_callback;

@@ -106,12 +106,10 @@ def patch_bridge_generated(filepath, mode):
                 pos += 1
             if depth == 0:
                 body = content[start:pos-1]
-                # Wrap original body with cfg and add empty fallback
+                # Use if cfg!() macro instead of #[cfg] attribute on expressions
+                # because stable Rust doesn't allow attributes on expressions (E0658)
                 new_body = f"""
-    #[cfg(not(feature = "{feature}"))]
-    {{{body}}}
-    #[cfg(feature = "{feature}")]
-    {{}}"""
+    if cfg!(not(feature = "{feature}")) {{{body}}}"""
                 content = content[:start] + new_body + content[pos-1:]
                 patched_count += 1
 
@@ -151,10 +149,7 @@ def patch_bridge_io(filepath, mode):
             if depth == 0:
                 body = content[start:pos-1]
                 new_body = f"""
-    #[cfg(not(feature = "{feature}"))]
-    {{{body}}}
-    #[cfg(feature = "{feature}")]
-    {{}}"""
+    if cfg!(not(feature = "{feature}")) {{{body}}}"""
                 content = content[:start] + new_body + content[pos-1:]
                 patched_count += 1
 

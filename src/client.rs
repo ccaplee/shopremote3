@@ -93,6 +93,7 @@ pub use super::lang::*;
 
 pub mod file_trait;
 pub mod helper;
+#[cfg(not(feature = "host-only"))]
 pub mod io_loop;
 pub mod screenshot;
 

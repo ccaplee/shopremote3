@@ -1,8 +1,9 @@
 use crate::{
     client::*,
     flutter_ffi::{EventToUI, SessionID},
-    ui_session_interface::{io_loop, InvokeUiSession, Session},
 };
+#[cfg(not(feature = "host-only"))]
+use crate::ui_session_interface::{io_loop, InvokeUiSession, Session};
 use flutter_rust_bridge::StreamSink;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 use hbb_common::dlopen::{
@@ -42,6 +43,7 @@ pub(crate) const APP_TYPE_CM: &str = "main";
 // pub(crate) const APP_TYPE_DESKTOP_FILE_TRANSFER: &str = "file transfer";
 // pub(crate) const APP_TYPE_DESKTOP_PORT_FORWARD: &str = "port forward";
 
+#[cfg(not(feature = "host-only"))]
 pub type FlutterSession = Arc<Session<FlutterHandler>>;
 
 lazy_static::lazy_static! {
@@ -688,6 +690,7 @@ impl FlutterHandler {
     }
 }
 
+#[cfg(not(feature = "host-only"))]
 impl InvokeUiSession for FlutterHandler {
     fn set_cursor_data(&self, cd: CursorData) {
         let colors = hbb_common::compress::decompress(&cd.colors);
@@ -1292,6 +1295,7 @@ impl FlutterHandler {
 }
 
 // This function is only used for the default connection session.
+#[cfg(not(feature = "host-only"))]
 pub fn session_add_existed(
     peer_id: String,
     session_id: SessionID,
@@ -1315,6 +1319,7 @@ pub fn session_add_existed(
 /// * `is_file_transfer` - If the session is used for file transfer.
 /// * `is_view_camera` - If the session is used for view camera.
 /// * `is_port_forward` - If the session is used for port forward.
+#[cfg(not(feature = "host-only"))]
 pub fn session_add(
     session_id: &SessionID,
     id: &str,
@@ -1402,6 +1407,7 @@ pub fn session_add(
 ///
 /// * `id` - The identifier of the remote session with prefix. Regex: [\w]*[\_]*[\d]+
 /// * `events2ui` - The events channel to ui.
+#[cfg(not(feature = "host-only"))]
 pub fn session_start_(
     session_id: &SessionID,
     id: &str,
@@ -1457,6 +1463,7 @@ fn try_send_close_event(event_stream: &Option<StreamSink<EventToUI>>) {
 }
 
 #[cfg(not(target_os = "ios"))]
+#[cfg(not(feature = "host-only"))]
 pub fn update_text_clipboard_required() {
     let is_required = sessions::get_sessions()
         .iter()
@@ -1467,6 +1474,7 @@ pub fn update_text_clipboard_required() {
 }
 
 #[cfg(feature = "unix-file-copy-paste")]
+#[cfg(not(feature = "host-only"))]
 pub fn update_file_clipboard_required() {
     let is_required = sessions::get_sessions()
         .iter()
@@ -1475,6 +1483,7 @@ pub fn update_file_clipboard_required() {
 }
 
 #[cfg(not(target_os = "ios"))]
+#[cfg(not(feature = "host-only"))]
 pub fn send_clipboard_msg(msg: Message, _is_file: bool) {
     for s in sessions::get_sessions() {
         #[cfg(feature = "unix-file-copy-paste")]
@@ -1685,6 +1694,7 @@ pub fn get_cur_session_id() -> SessionID {
     CUR_SESSION_ID.read().unwrap().clone()
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn get_cur_peer_id() -> String {
     sessions::get_peer_id_by_session_id(&get_cur_session_id(), ConnType::DEFAULT_CONN)
         .unwrap_or("".to_string())
@@ -1726,6 +1736,7 @@ fn char_to_session_id(c: *const char) -> ResultType<SessionID> {
     SessionID::from_str(str).map_err(|e| anyhow!("{:?}", e))
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn session_get_rgba_size(session_id: SessionID, display: usize) -> usize {
     if let Some(session) = sessions::get_session_by_session_id(&session_id) {
         return session
@@ -1739,6 +1750,7 @@ pub fn session_get_rgba_size(session_id: SessionID, display: usize) -> usize {
 }
 
 #[no_mangle]
+#[cfg(not(feature = "host-only"))]
 pub extern "C" fn session_get_rgba(session_uuid_str: *const char, display: usize) -> *const u8 {
     if let Ok(session_id) = char_to_session_id(session_uuid_str) {
         if let Some(s) = sessions::get_session_by_session_id(&session_id) {
@@ -1749,6 +1761,7 @@ pub extern "C" fn session_get_rgba(session_uuid_str: *const char, display: usize
     std::ptr::null()
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn session_next_rgba(session_id: SessionID, display: usize) {
     if let Some(s) = sessions::get_session_by_session_id(&session_id) {
         return s.ui_handler.next_rgba(display);
@@ -1756,6 +1769,7 @@ pub fn session_next_rgba(session_id: SessionID, display: usize) {
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn session_set_size(session_id: SessionID, display: usize, width: usize, height: usize) {
     for s in sessions::get_sessions() {
         if let Some(h) = s
@@ -1777,6 +1791,7 @@ pub fn session_set_size(session_id: SessionID, display: usize, width: usize, hei
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn session_register_pixelbuffer_texture(session_id: SessionID, display: usize, ptr: usize) {
     for s in sessions::get_sessions() {
         if let Some(h) = s
@@ -1793,6 +1808,7 @@ pub fn session_register_pixelbuffer_texture(session_id: SessionID, display: usiz
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn session_register_gpu_texture(_session_id: SessionID, _display: usize, _output_ptr: usize) {
     #[cfg(feature = "vram")]
     for s in sessions::get_sessions() {
@@ -1848,6 +1864,7 @@ pub fn get_adapter_luid() -> Option<i64> {
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn push_session_event(session_id: &SessionID, name: &str, event: Vec<(&str, &str)>) {
     if let Some(s) = sessions::get_session_by_session_id(session_id) {
         s.push_event(name, &event, &[]);
@@ -1952,6 +1969,7 @@ fn session_send_touch_event(
     }
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn session_send_pointer(session_id: SessionID, msg: String) {
     if let Ok(m) = serde_json::from_str::<HashMap<String, serde_json::Value>>(&msg) {
         let alt = m.get("alt").is_some();
@@ -1969,6 +1987,7 @@ pub fn session_send_pointer(session_id: SessionID, msg: String) {
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn session_on_waiting_for_image_dialog_show(session_id: SessionID) {
     for s in sessions::get_sessions() {
         if let Some(h) = s.session_handlers.write().unwrap().get_mut(&session_id) {
@@ -1984,11 +2003,13 @@ pub enum SessionHook {
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn get_cur_session() -> Option<FlutterSession> {
     sessions::get_session_by_session_id(&*CUR_SESSION_ID.read().unwrap())
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 pub fn try_sync_peer_option(
     session: &FlutterSession,
     cur_id: &SessionID,
@@ -2011,6 +2032,7 @@ pub fn try_sync_peer_option(
     }
 }
 
+#[cfg(not(feature = "host-only"))]
 pub(super) fn session_update_virtual_display(session: &FlutterSession, index: i32, on: bool) {
     let virtual_display_key = "virtual-display";
     let displays = session.get_option(virtual_display_key.to_owned());
@@ -2060,6 +2082,7 @@ pub(super) fn session_update_virtual_display(session: &FlutterSession, index: i3
 }
 
 // sessions mod is used to avoid the big lock of sessions' map.
+#[cfg(not(feature = "host-only"))]
 pub mod sessions {
 
     use super::*;
