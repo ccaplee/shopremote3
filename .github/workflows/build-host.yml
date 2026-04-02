@@ -17,7 +17,7 @@ env:
   FLUTTER_VERSION: "3.24.5"
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VCPKG_COMMIT_ID: "120deac3062162151622ca4860575a33844ba10b"
-  VERSION: "2.0.1"
+  VERSION: "3.0.1"
   TAG_NAME: "${{ inputs.upload-tag }}"
   UPLOAD_ARTIFACT: true
 
@@ -195,7 +195,6 @@ jobs:
     name: Create Release
     needs: [build-host-windows, build-host-macos, build-host-linux]
     runs-on: ubuntu-latest
-    if: ${{ env.UPLOAD_ARTIFACT == 'true' }}
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
@@ -205,7 +204,7 @@ jobs:
       - name: Upload release artifacts
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAG_NAME }}
+          tag_name: host-${{ inputs.upload-tag }}
           files: artifacts/**/*
           draft: false
           prerelease: false
