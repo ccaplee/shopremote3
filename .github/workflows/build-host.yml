@@ -106,7 +106,7 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { target: x86_64-apple-darwin, os: macos-12, arch: x86_64 }
+          - { target: x86_64-apple-darwin, os: macos-13, arch: x86_64 }
           - { target: aarch64-apple-darwin, os: macos-14, arch: aarch64 }
     steps:
       - name: Export GitHub Actions cache environment variables
