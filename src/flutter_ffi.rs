@@ -1629,6 +1629,7 @@ pub fn main_get_main_display() -> SyncReturn<String> {
         let is_linux_wayland = !is_x11();
 
         if !is_linux_wayland {
+            #[cfg(not(feature = "remote-only"))]
             if let Ok(displays) = crate::display_service::try_get_displays() {
                 // to-do: Need to detect current display index.
                 if let Some(display) = displays.iter().next() {
@@ -1666,7 +1667,7 @@ pub fn main_get_displays() -> SyncReturn<String> {
     let display_info = "".to_owned();
     #[cfg(not(target_os = "ios"))]
     let mut display_info = "".to_owned();
-    #[cfg(not(target_os = "ios"))]
+    #[cfg(all(not(target_os = "ios"), not(feature = "remote-only")))]
     if let Ok(displays) = crate::display_service::try_get_displays() {
         let displays = displays
             .iter()
@@ -1733,18 +1734,18 @@ pub fn session_get_conn_token(session_id: SessionID) -> SyncReturn<Option<String
     }
 }
 
-#[cfg(not(feature = "remote-only"))]
 pub fn cm_handle_incoming_voice_call(id: i32, accept: bool) {
+    #[cfg(not(feature = "remote-only"))]
     crate::ui_cm_interface::handle_incoming_voice_call(id, accept);
 }
 
-#[cfg(not(feature = "remote-only"))]
 pub fn cm_close_voice_call(id: i32) {
+    #[cfg(not(feature = "remote-only"))]
     crate::ui_cm_interface::close_voice_call(id);
 }
 
 pub fn set_voice_call_input_device(_is_cm: bool, _device: String) {
-    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
+    #[cfg(not(any(target_os = "android", target_os = "ios", feature = "remote-only")))]
     if _is_cm {
         let _ = crate::ipc::set_config("voice-call-input", _device);
     } else {
@@ -1753,16 +1754,16 @@ pub fn set_voice_call_input_device(_is_cm: bool, _device: String) {
 }
 
 pub fn get_voice_call_input_device(_is_cm: bool) -> String {
-    #[cfg(all(not(any(target_os = "android", target_os = "ios")), not(feature = "remote-only")))]
-    if _is_cm {
+    #[cfg(not(any(target_os = "android", target_os = "ios", feature = "remote-only")))]
+    return if _is_cm {
         match crate::ipc::get_config("voice-call-input") {
             Ok(Some(device)) => device,
             _ => "".to_owned(),
         }
     } else {
         crate::audio_service::get_voice_call_input_device().unwrap_or_default()
-    }
-    #[cfg(any(target_os = "android", target_os = "ios"))]
+    };
+    #[allow(unreachable_code)]
     "".to_owned()
 }
 
@@ -1795,19 +1796,25 @@ pub fn main_get_fingerprint() -> String {
 }
 
 pub fn cm_get_clients_state() -> String {
-    crate::ui_cm_interface::get_clients_state()
+    #[cfg(not(feature = "remote-only"))]
+    return crate::ui_cm_interface::get_clients_state();
+    #[allow(unreachable_code)]
+    "[]".to_owned()
 }
 
 pub fn cm_check_clients_length(length: usize) -> Option<String> {
+    #[cfg(not(feature = "remote-only"))]
     if length != crate::ui_cm_interface::get_clients_length() {
-        Some(crate::ui_cm_interface::get_clients_state())
-    } else {
-        None
+        return Some(crate::ui_cm_interface::get_clients_state());
     }
+    None
 }
 
 pub fn cm_get_clients_length() -> usize {
-    crate::ui_cm_interface::get_clients_length()
+    #[cfg(not(feature = "remote-only"))]
+    return crate::ui_cm_interface::get_clients_length();
+    #[allow(unreachable_code)]
+    0
 }
 
 pub fn main_init(app_dir: String, custom_client_config: String) {
@@ -2222,12 +2229,12 @@ pub fn main_create_shortcut(_id: String) {
 }
 
 pub fn cm_send_chat(conn_id: i32, msg: String) {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     crate::ui_cm_interface::send_chat(conn_id, msg);
 }
 
 pub fn cm_login_res(conn_id: i32, res: bool) {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     if res {
         crate::ui_cm_interface::authorize(conn_id);
     } else {
@@ -2236,43 +2243,45 @@ pub fn cm_login_res(conn_id: i32, res: bool) {
 }
 
 pub fn cm_close_connection(conn_id: i32) {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     crate::ui_cm_interface::close(conn_id);
 }
 
 pub fn cm_remove_disconnected_connection(conn_id: i32) {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     crate::ui_cm_interface::remove(conn_id);
 }
 
 pub fn cm_check_click_time(conn_id: i32) {
-    #[cfg(not(any(target_os = "ios")))]
-    crate::ui_cm_interface::check_click_time(conn_id)
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
+    crate::ui_cm_interface::check_click_time(conn_id);
 }
 
 pub fn cm_get_click_time() -> f64 {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     return crate::ui_cm_interface::get_click_time() as _;
-    #[cfg(any(target_os = "ios"))]
-    return 0 as _;
+    #[allow(unreachable_code)]
+    0 as _
 }
 
 pub fn cm_switch_permission(conn_id: i32, name: String, enabled: bool) {
-    #[cfg(not(any(target_os = "ios")))]
-    crate::ui_cm_interface::switch_permission(conn_id, name, enabled)
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
+    crate::ui_cm_interface::switch_permission(conn_id, name, enabled);
 }
 
 pub fn cm_can_elevate() -> SyncReturn<bool> {
-    SyncReturn(crate::ui_cm_interface::can_elevate())
+    #[cfg(not(feature = "remote-only"))]
+    return SyncReturn(crate::ui_cm_interface::can_elevate());
+    SyncReturn(false)
 }
 
 pub fn cm_elevate_portable(conn_id: i32) {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     crate::ui_cm_interface::elevate_portable(conn_id);
 }
 
 pub fn cm_switch_back(conn_id: i32) {
-    #[cfg(not(any(target_os = "ios")))]
+    #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     crate::ui_cm_interface::switch_back(conn_id);
 }
 
@@ -2836,7 +2845,7 @@ pub fn main_audio_support_loopback() -> SyncReturn<bool> {
     #[cfg(all(feature = "screencapturekit", not(feature = "remote-only")))]
     let is_surpport = crate::audio_service::is_screen_capture_kit_available();
     #[cfg(all(feature = "screencapturekit", feature = "remote-only"))]
-    let is_surpport = false;
+    let is_surpport: bool = false;
     #[cfg(not(any(target_os = "windows", feature = "screencapturekit")))]
     let is_surpport = false;
     SyncReturn(is_surpport)
