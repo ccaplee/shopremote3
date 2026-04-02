@@ -115,7 +115,7 @@ pub trait PrivacyMode: Sync + Send {
 
 lazy_static::lazy_static! {
     pub static ref DEFAULT_PRIVACY_MODE_IMPL: String = {
-        #[cfg(windows)]
+        #[cfg(all(windows, not(feature = "remote-only")))]
         {
             if win_exclude_from_capture::is_supported() {
                 PRIVACY_MODE_IMPL_WIN_EXCLUDE_FROM_CAPTURE
@@ -130,6 +130,10 @@ lazy_static::lazy_static! {
                     }
                 }
             }.to_owned()
+        }
+        #[cfg(all(windows, feature = "remote-only"))]
+        {
+            "".to_owned()
         }
         #[cfg(not(windows))]
         {
@@ -365,7 +369,7 @@ async fn set_privacy_mode_state(
 /// 지원되는 프라이버시 모드 구현 목록 반환
 /// (구현 키, 설명 메시지 키) 튜플의 벡터
 pub fn get_supported_privacy_mode_impl() -> Vec<(&'static str, &'static str)> {
-    #[cfg(target_os = "windows")]
+    #[cfg(all(target_os = "windows", not(feature = "remote-only")))]
     {
         let mut vec_impls = Vec::new();
 
@@ -391,6 +395,10 @@ pub fn get_supported_privacy_mode_impl() -> Vec<(&'static str, &'static str)> {
         }
 
         vec_impls
+    }
+    #[cfg(all(target_os = "windows", feature = "remote-only"))]
+    {
+        Vec::new()
     }
     #[cfg(target_os = "macos")]
     {
