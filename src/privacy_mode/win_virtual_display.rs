@@ -651,6 +651,7 @@ impl PrivacyMode for PrivacyModeImpl {
         // 입력 훅 제거
         super::win_input::unhook()?;
         // 임시로 디스플레이 변경 알림 무시
+        #[cfg(not(feature = "remote-only"))]
         let _tmp_ignore_changed_holder = crate::display_service::temp_ignore_displays_changed();
         // 디스플레이 설정 복원
         self.restore();

@@ -151,7 +151,10 @@ pub fn core_main() -> Option<Vec<String>> {
             && (is_quick_support_exe(&arg_exe)
                 || config::LocalConfig::get_option("pre-elevate-service") == "Y"
                 || (!click_setup && crate::platform::is_elevated(None).unwrap_or(false)));
-        crate::portable_service::client::set_quick_support(_is_quick_support);
+        #[cfg(not(feature = "remote-only"))]
+        {
+            crate::portable_service::client::set_quick_support(_is_quick_support);
+        }
     }
     let mut log_name = "".to_owned();
     if args.len() > 0 && args[0].starts_with("--") {
@@ -175,9 +178,12 @@ pub fn core_main() -> Option<Vec<String>> {
         && !_is_elevate
         && !_is_run_as_system
     {
-        use crate::portable_service::client;
-        if let Err(e) = client::start_portable_service(client::StartPara::Direct) {
-            log::error!("Failed to start portable service: {:?}", e);
+        #[cfg(not(feature = "remote-only"))]
+        {
+            use crate::portable_service::client;
+            if let Err(e) = client::start_portable_service(client::StartPara::Direct) {
+                log::error!("Failed to start portable service: {:?}", e);
+            }
         }
     }
     #[cfg(windows)]

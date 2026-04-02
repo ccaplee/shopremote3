@@ -442,7 +442,14 @@ pub fn check_privacy_mode_err(
 ) -> String {
     // win magnifier implementation requires a test of creating a capturer.
     if is_current_privacy_mode_impl(PRIVACY_MODE_IMPL_WIN_MAG) {
-        crate::video_service::test_create_capturer(privacy_mode_id, display_idx, timeout_millis)
+        #[cfg(not(feature = "remote-only"))]
+        {
+            return crate::video_service::test_create_capturer(privacy_mode_id, display_idx, timeout_millis);
+        }
+        #[cfg(feature = "remote-only")]
+        {
+            return "".to_owned();
+        }
     } else {
         "".to_owned()
     }

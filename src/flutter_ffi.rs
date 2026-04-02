@@ -1649,14 +1649,16 @@ pub fn main_get_main_display() -> SyncReturn<String> {
 
         if !is_linux_wayland {
             #[cfg(not(feature = "remote-only"))]
-            if let Ok(displays) = crate::display_service::try_get_displays() {
-                // to-do: Need to detect current display index.
-                if let Some(display) = displays.iter().next() {
-                    display_info = serde_json::to_string(&HashMap::from([
-                        ("w", display.width()),
-                        ("h", display.height()),
-                    ]))
-                    .unwrap_or_default();
+            {
+                if let Ok(displays) = crate::display_service::try_get_displays() {
+                    // to-do: Need to detect current display index.
+                    if let Some(display) = displays.iter().next() {
+                        display_info = serde_json::to_string(&HashMap::from([
+                            ("w", display.width()),
+                            ("h", display.height()),
+                        ]))
+                        .unwrap_or_default();
+                    }
                 }
             }
         }
@@ -2476,7 +2478,7 @@ pub fn main_account_auth_result() -> String {
 
 pub fn main_on_main_window_close() {
     // may called more than one times
-    #[cfg(windows)]
+    #[cfg(all(windows, not(feature = "remote-only")))]
     crate::portable_service::client::drop_portable_service_shared_memory();
 }
 

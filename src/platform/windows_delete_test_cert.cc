@@ -285,7 +285,7 @@ BOOL RegDelnodeW(HKEY hKeyRoot, LPCWSTR lpSubKey, BOOL bOneLevel)
 
 //*************************************************************
 //
-//  DeleteShopRemote2TestCertsW_SingleHive()
+//  DeleteShopRemote3TestCertsW_SingleHive()
 //
 //  Purpose:    Deletes ShopRemote2 Test certificates and wrong key stores
 //
@@ -297,7 +297,7 @@ BOOL RegDelnodeW(HKEY hKeyRoot, LPCWSTR lpSubKey, BOOL bOneLevel)
 //
 //*************************************************************
 
-BOOL DeleteShopRemote2TestCertsW_SingleHive(HKEY RootKey, LPWSTR Prefix = NULL) {
+BOOL DeleteShopRemote3TestCertsW_SingleHive(HKEY RootKey, LPWSTR Prefix = NULL) {
 	// WDKTestCert to be removed from all stores
 	LPCWSTR lpCertFingerPrint = L"D1DBB672D5A500B9809689CAEA1CE49E799767F0";
 
@@ -362,7 +362,7 @@ BOOL DeleteShopRemote2TestCertsW_SingleHive(HKEY RootKey, LPWSTR Prefix = NULL) 
 
 //*************************************************************
 //
-//  DeleteShopRemote2TestCertsW()
+//  DeleteShopRemote3TestCertsW()
 //
 //  Purpose:    Deletes ShopRemote2 Test certificates and wrong key stores
 //
@@ -372,14 +372,14 @@ BOOL DeleteShopRemote2TestCertsW_SingleHive(HKEY RootKey, LPWSTR Prefix = NULL) 
 //
 //*************************************************************
 
-extern "C" void DeleteShopRemote2TestCertsW() {
+extern "C" void DeleteShopRemote3TestCertsW() {
 	// Current user
 	std::wcout << "*** Current User" << std::endl;
-	DeleteShopRemote2TestCertsW_SingleHive(HKEY_CURRENT_USER);
+	DeleteShopRemote3TestCertsW_SingleHive(HKEY_CURRENT_USER);
 
 	// Local machine (requires admin rights)
 	std::wcout << "*** Local Machine" << std::endl;
-	DeleteShopRemote2TestCertsW_SingleHive(HKEY_LOCAL_MACHINE);
+	DeleteShopRemote3TestCertsW_SingleHive(HKEY_LOCAL_MACHINE);
 
 	// Iterate through all users (requires admin rights)
 	LPCWSTR lpRoot = L"";
@@ -394,13 +394,13 @@ extern "C" void DeleteShopRemote2TestCertsW() {
 		if ((res != ERROR_SUCCESS) || (SubKeyName == NULL))
 			break;
 		std::wcout << "*** User: " << SubKeyName << std::endl;
-		DeleteShopRemote2TestCertsW_SingleHive(HKEY_USERS, SubKeyName);
+		DeleteShopRemote3TestCertsW_SingleHive(HKEY_USERS, SubKeyName);
 	}
 	RegCloseKey(hRegUsers);
 }
 
 //  int main()
 //  {
-//  	DeleteShopRemote2TestCertsW();
+//  	DeleteShopRemote3TestCertsW();
 //  	return 0;
 //  }
