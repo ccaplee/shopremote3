@@ -6,11 +6,13 @@ use crate::platform::linux::is_x11;
 use crate::client::file_trait::FileManager;
 use crate::{
     common::{make_fd_to_json, make_vec_fd_to_json},
-    flutter::{
-        self, session_add, session_add_existed, session_start_, sessions, try_sync_peer_option,
-    },
+    flutter::{self},
     input::*,
     ui_interface::{self, *},
+};
+#[cfg(not(feature = "host-only"))]
+use crate::flutter::{
+    session_add, session_add_existed, session_start_, sessions, try_sync_peer_option,
 };
 use flutter_rust_bridge::{StreamSink, SyncReturn};
 #[cfg(feature = "plugin_framework")]
@@ -269,8 +271,14 @@ pub fn session_get_enable_trusted_devices(session_id: SessionID) -> SyncReturn<b
     SyncReturn(v)
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn will_session_close_close_session(session_id: SessionID) -> SyncReturn<bool> {
     SyncReturn(sessions::would_remove_peer_by_session_id(&session_id))
+}
+#[cfg(feature = "host-only")]
+pub fn will_session_close_close_session(session_id: SessionID) -> SyncReturn<bool> {
+    let _ = session_id;
+    SyncReturn(false)
 }
 
 #[cfg(not(feature = "host-only"))]
@@ -1235,6 +1243,7 @@ pub fn main_set_env(key: String, value: Option<String>) -> SyncReturn<()> {
     SyncReturn(())
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn main_set_local_option(key: String, value: String) {
     let is_texture_render_key = key.eq(config::keys::OPTION_TEXTURE_RENDER);
     let is_d3d_render_key = key.eq(config::keys::OPTION_ALLOW_D3D_RENDER);
@@ -1252,6 +1261,10 @@ pub fn main_set_local_option(key: String, value: String) {
             session.update_supported_decodings();
         }
     }
+}
+#[cfg(feature = "host-only")]
+pub fn main_set_local_option(key: String, value: String) {
+    set_local_option(key, value);
 }
 
 // We do use use `main_get_local_option` and `main_set_local_option`.
@@ -1294,6 +1307,7 @@ pub fn main_get_input_source() -> SyncReturn<String> {
     SyncReturn(input_source)
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn main_set_input_source(session_id: SessionID, value: String) {
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     {
@@ -1302,6 +1316,10 @@ pub fn main_set_input_source(session_id: SessionID, value: String) {
             try_sync_peer_option(&session, &session_id, "input_source", None);
         }
     }
+}
+#[cfg(feature = "host-only")]
+pub fn main_set_input_source(session_id: SessionID, value: String) {
+    let _ = (session_id, value);
 }
 
 /// Set cursor position (for pointer lock re-centering).
@@ -2404,10 +2422,15 @@ pub fn main_update_me() -> SyncReturn<bool> {
     SyncReturn(true)
 }
 
+#[cfg(not(feature = "host-only"))]
 pub fn set_cur_session_id(session_id: SessionID) {
     if let Some(session) = sessions::get_session_by_session_id(&session_id) {
         set_cur_session_id_(session_id, &session.get_keyboard_mode())
     }
+}
+#[cfg(feature = "host-only")]
+pub fn set_cur_session_id(session_id: SessionID) {
+    let _ = session_id;
 }
 
 fn set_cur_session_id_(session_id: SessionID, _keyboard_mode: &str) {
