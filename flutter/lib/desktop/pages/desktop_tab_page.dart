@@ -3,6 +3,7 @@ import 'package:shopremote2/common.dart';
 import 'package:shopremote2/consts.dart';
 import 'package:shopremote2/desktop/pages/desktop_home_page.dart';
 import 'package:shopremote2/desktop/pages/desktop_home_page_host.dart';
+import 'package:shopremote2/desktop/pages/desktop_home_page_remote.dart';
 import 'package:shopremote2/desktop/pages/desktop_setting_page.dart';
 import 'package:shopremote2/desktop/widgets/tabbar_widget.dart';
 import 'package:shopremote2/models/platform_model.dart';
@@ -45,10 +46,12 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
     RemoteCountState.init();
     Get.put<DesktopTabController>(tabController);
 
-    // Use host-only home page when in host-only mode
+    // Use mode-specific home page based on app configuration
     final homePageWidget = isHostOnly
         ? DesktopHomePageHost(key: const ValueKey(kTabLabelHomePage))
-        : DesktopHomePage(key: const ValueKey(kTabLabelHomePage));
+        : isRemoteOnly
+            ? DesktopHomePageRemote(key: const ValueKey(kTabLabelHomePage))
+            : DesktopHomePage(key: const ValueKey(kTabLabelHomePage));
 
     tabController.add(TabInfo(
         key: kTabLabelHomePage,

@@ -41,7 +41,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   double? get height => bind.isIncomingOnly() ? null : em * 3;
 
   void onUsePublicServerGuide() {
-    // ShopRemote2 기본 서버 사용
+    // ShopRemote3 기본 서버 사용
   }
 
   @override

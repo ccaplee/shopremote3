@@ -338,7 +338,7 @@ fn correct_app_name(s: &str) -> String {
         s = s.replace("com.shopremote2.app", &bundleid);
     }
     s = s.replace("shopremote2", &crate::get_app_name().to_lowercase());
-    s = s.replace("ShopRemote2", &crate::get_app_name());
+    s = s.replace("ShopRemote3", &crate::get_app_name());
     s
 }
 
@@ -767,8 +767,8 @@ pub fn start_os_service() {
     /* // mouse/keyboard works in prelogin now with launchctl asuser.
        // below can avoid multi-users logged in problem, but having its own below problem.
        // Not find a good way to start --cm without root privilege (affect file transfer).
-       // one way is to start with `launchctl asuser <uid> open -n -a /Applications/ShopRemote2.app/ --args --cm`,
-       // this way --cm is started with the user privilege, but we will have problem to start another ShopRemote2.app
+       // one way is to start with `launchctl asuser <uid> open -n -a /Applications/ShopRemote3.app/ --args --cm`,
+       // this way --cm is started with the user privilege, but we will have problem to start another ShopRemote3.app
        // with open in explorer.
         use std::sync::{
             atomic::{AtomicBool, Ordering},
@@ -865,7 +865,7 @@ pub fn update_me() -> ResultType<()> {
     );
 
     let cmd = std::env::current_exe()?;
-    // ShopRemote2.app/Contents/MacOS/ShopRemote2
+    // ShopRemote3.app/Contents/MacOS/ShopRemote3
     let app_dir = cmd
         .parent()
         .and_then(|p| p.parent())
@@ -961,7 +961,7 @@ pub fn extract_update_dmg(file: &str) {
 }
 
 fn extract_dmg(dmg_path: &str, target_dir: &str) -> ResultType<()> {
-    let mount_point = "/Volumes/ShopRemote2Update";
+    let mount_point = "/Volumes/ShopRemote3Update";
     let target_path = Path::new(target_dir);
 
     if target_path.exists() {

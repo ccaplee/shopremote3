@@ -47,7 +47,7 @@ lazy_static::lazy_static! {
 }
 
 #[derive(Deserialize)]
-pub struct MsgToShopRemote2 {
+pub struct MsgToShopRemote3 {
     pub r#type: String,
     pub data: Vec<u8>,
 }
@@ -250,7 +250,7 @@ fn handle_msg_to_shopremote2(id: String, content: *const c_void, len: usize) -> 
         "parse msg string"
     );
     let msg_to_shopremote2 = early_return_value!(
-        serde_json::from_str::<MsgToShopRemote2>(s),
+        serde_json::from_str::<MsgToShopRemote3>(s),
         ERR_CALLBACK_INVALID_MSG,
         "parse msg '{}'",
         s
@@ -267,7 +267,7 @@ fn handle_msg_to_shopremote2(id: String, content: *const c_void, len: usize) -> 
     }
 }
 
-fn request_plugin_sign(id: String, msg_to_shopremote2: MsgToShopRemote2) -> PluginReturn {
+fn request_plugin_sign(id: String, msg_to_shopremote2: MsgToShopRemote3) -> PluginReturn {
     let signature_data = early_return_value!(
         std::str::from_utf8(&msg_to_shopremote2.data),
         ERR_CALLBACK_INVALID_MSG,

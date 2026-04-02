@@ -214,8 +214,8 @@ pub struct Connection {
     server: super::ServerPtrWeak,
     hash: Hash,
     read_jobs: Vec<fs::TransferJob>,
-    timer: crate::ShopRemote2Interval,
-    file_timer: crate::ShopRemote2Interval,
+    timer: crate::ShopRemote3Interval,
+    file_timer: crate::ShopRemote3Interval,
     file_transfer: Option<(String, bool)>,
     view_camera: bool,
     terminal: bool,
@@ -4671,7 +4671,7 @@ impl Connection {
     #[cfg(all(target_os = "windows", feature = "flutter"))]
     async fn send_printer_request(&mut self, data: Vec<u8>) {
         // This path is only used to identify the printer job.
-        let path = format!("ShopRemote2://FsJob//Printer/{}", get_time());
+        let path = format!("ShopRemote3://FsJob//Printer/{}", get_time());
 
         let msg = fs::new_send(0, fs::JobType::Printer, path.clone(), 1, false);
         self.send(msg).await;

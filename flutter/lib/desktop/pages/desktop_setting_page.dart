@@ -2360,7 +2360,7 @@ class _AboutState extends State<_About> {
       final scrollController = ScrollController();
       return SingleChildScrollView(
         controller: scrollController,
-        child: _Card(title: translate('About ShopRemote2'), children: [
+        child: _Card(title: translate('About ShopRemote3'), children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -2405,7 +2405,7 @@ class _AboutState extends State<_About> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Copyright © ${DateTime.now().toString().substring(0, 4)} ShopRemote2.\n$license',
+                            'Copyright © ${DateTime.now().toString().substring(0, 4)} ShopRemote3.\n$license',
                             style: const TextStyle(color: Colors.white),
                           ),
                           Text(
@@ -2587,9 +2587,9 @@ class _WaylandCardState extends State<WaylandCard> {
   final _clearShortcutsInhibitorFailedMsg = ''.obs;
   // Don't show the shortcuts permission reset button for now.
   // Users can change it manually:
-  //   "Settings" -> "Apps" -> "ShopRemote2" -> "Permissions" -> "Inhibit Shortcuts".
+  //   "Settings" -> "Apps" -> "ShopRemote3" -> "Permissions" -> "Inhibit Shortcuts".
   // For resetting(clearing) the permission from the portal permission store, you can
-  // use (replace <desktop-id> with the ShopRemote2 desktop file ID):
+  // use (replace <desktop-id> with the ShopRemote3 desktop file ID):
   //   busctl --user call org.freedesktop.impl.portal.PermissionStore \
   //   /org/freedesktop/impl/portal/PermissionStore org.freedesktop.impl.portal.PermissionStore \
   //   DeletePermission sss "gnome" "shortcuts-inhibitor" "<desktop-id>"

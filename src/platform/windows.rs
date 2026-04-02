@@ -1879,8 +1879,8 @@ fn get_public_base_dir() -> PathBuf {
 #[inline]
 pub fn get_custom_client_staging_dir() -> PathBuf {
     get_public_base_dir()
-        .join("ShopRemote2")
-        .join("ShopRemote2CustomClientStaging")
+        .join("ShopRemote3")
+        .join("ShopRemote3CustomClientStaging")
 }
 
 /// Removes the custom client staging directory.
@@ -1889,7 +1889,7 @@ pub fn get_custom_client_staging_dir() -> PathBuf {
 ///
 /// Rationale
 /// - The staging directory only contains a small `custom.txt`, leaving it is harmless.
-/// - Deleting directories under a public location (e.g., C:\\ProgramData\\ShopRemote2) is
+/// - Deleting directories under a public location (e.g., C:\\ProgramData\\ShopRemote3) is
 ///   susceptible to TOCTOU attacks if an unprivileged user can replace the path with a
 ///   symlink/junction between checks and deletion.
 ///
@@ -2058,7 +2058,7 @@ pub fn bootstrap() -> bool {
     }
     #[cfg(not(debug_assertions))]
     {
-        // This function will cause `'sciter.dll' was not found neither in PATH nor near the current executable.` when debugging ShopRemote2.
+        // This function will cause `'sciter.dll' was not found neither in PATH nor near the current executable.` when debugging ShopRemote3.
         // Only call set_safe_load_dll() on Windows 10 or greater
         if is_win_10_or_greater() {
             set_safe_load_dll()
@@ -2816,11 +2816,11 @@ mod cert {
     use hbb_common::ResultType;
 
     extern "C" {
-        fn DeleteShopRemote2TestCertsW();
+        fn DeleteShopRemote3TestCertsW();
     }
     pub fn uninstall_cert() -> ResultType<()> {
         unsafe {
-            DeleteShopRemote2TestCertsW();
+            DeleteShopRemote3TestCertsW();
         }
         Ok(())
     }
@@ -3571,7 +3571,7 @@ pub fn message_box(text: &str) {
         .encode_utf16()
         .chain(std::iter::once(0))
         .collect::<Vec<u16>>();
-    let caption = "ShopRemote2 Output"
+    let caption = "ShopRemote3 Output"
         .encode_utf16()
         .chain(std::iter::once(0))
         .collect::<Vec<u16>>();
@@ -4125,10 +4125,10 @@ fn get_pids_with_args_from_wmic_output<S2: AsRef<str>>(
     // CommandLine=
     // ProcessId=34668
     //
-    // CommandLine="C:\Program Files\ShopRemote2\ShopRemote2.exe" --tray
+    // CommandLine="C:\Program Files\ShopRemote3\ShopRemote3.exe" --tray
     // ProcessId=13728
     //
-    // CommandLine="C:\Program Files\ShopRemote2\ShopRemote2.exe"
+    // CommandLine="C:\Program Files\ShopRemote3\ShopRemote3.exe"
     // ProcessId=10136
     let mut pids = Vec::new();
     let mut proc_found = false;

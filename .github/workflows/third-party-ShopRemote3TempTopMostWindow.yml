@@ -1,4 +1,4 @@
-name: build ShopRemote2TempTopMostWindow
+name: build ShopRemote3TempTopMostWindow
 
 on:
   workflow_call:
@@ -31,7 +31,7 @@ env:
   project_path: WindowInjection/WindowInjection.vcxproj
 
 jobs:
-  build-ShopRemote2TempTopMostWindow:
+  build-ShopRemote3TempTopMostWindow:
     runs-on: ${{ inputs.target }}
     strategy:
         fail-fast: false

@@ -129,7 +129,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
       margin: const EdgeInsets.only(left: 20, right: 16, top: 16, bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: MyTheme.accent.withOpacity(0.3)),
+        border: Border.all(color: MyTheme.getPrimaryColor().withOpacity(0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -156,7 +156,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: MyTheme.accent,
+                  color: MyTheme.getPrimaryColor(),
                   fontFamily: 'monospace',
                 ),
               ),
@@ -195,7 +195,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
       margin: const EdgeInsets.only(left: 20, right: 16, bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: MyTheme.accent.withOpacity(0.3)),
+        border: Border.all(color: MyTheme.getPrimaryColor().withOpacity(0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -221,7 +221,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
                       Icons.refresh,
                       size: 18,
                       color: refreshHover.value
-                          ? MyTheme.accent
+                          ? MyTheme.getPrimaryColor()
                           : textColor?.withOpacity(0.5),
                     ),
                   ),
@@ -245,7 +245,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: MyTheme.accent,
+                  color: MyTheme.getPrimaryColor(),
                   fontFamily: 'monospace',
                 ),
               ),
@@ -271,7 +271,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
       margin: const EdgeInsets.only(left: 20, right: 16, bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: MyTheme.accent.withOpacity(0.3)),
+        border: Border.all(color: MyTheme.getPrimaryColor().withOpacity(0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -328,7 +328,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
       margin: const EdgeInsets.only(left: 20, right: 16, bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: MyTheme.accent.withOpacity(0.3)),
+        border: Border.all(color: MyTheme.getPrimaryColor().withOpacity(0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -402,7 +402,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
                   : Theme.of(context).colorScheme.background,
               border: Border.all(
                 color: settingsHover.value
-                    ? MyTheme.accent.withOpacity(0.5)
+                    ? MyTheme.getPrimaryColor().withOpacity(0.5)
                     : Colors.transparent,
               ),
             ),
@@ -410,7 +410,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
               Icons.settings,
               size: 20,
               color: settingsHover.value
-                  ? MyTheme.accent
+                  ? MyTheme.getPrimaryColor()
                   : textColor?.withOpacity(0.5),
             ),
           ),

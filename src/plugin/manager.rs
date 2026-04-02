@@ -236,7 +236,7 @@ fn elevate_install(
     if !same_plugin_exists {
         args.push(&plugin_url);
     }
-    crate::platform::elevate(args, "ShopRemote2 wants to install then plugin")
+    crate::platform::elevate(args, "ShopRemote3 wants to install then plugin")
 }
 
 /// Windows에서 플러그인 언로드를 위해 권한 상승을 수행합니다
@@ -259,7 +259,7 @@ fn elevate_uninstall(plugin_id: &str) -> ResultType<bool> {
 fn elevate_uninstall(plugin_id: &str) -> ResultType<bool> {
     crate::platform::elevate(
         vec!["--plugin-uninstall", plugin_id],
-        "ShopRemote2 wants to uninstall the plugin",
+        "ShopRemote3 wants to uninstall the plugin",
     )
 }
 

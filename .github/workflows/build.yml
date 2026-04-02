@@ -1,4 +1,4 @@
-name: Build ShopRemote2 (Rust Only)
+name: Build ShopRemote3 (Rust Only)
 
 on:
   workflow_dispatch:

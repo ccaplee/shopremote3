@@ -14,10 +14,10 @@ jobs:
   # Finds latest release and transforms F-Droid version code from version as follows:
   # X.Y.Z-A => X * 1e6 + Y * 1e4 + Z * 1e2 + A
   update-fdroid-version-file:
-    name: Publish ShopRemote2 version file for F-Droid updater
+    name: Publish ShopRemote3 version file for F-Droid updater
     runs-on: ubuntu-latest
     steps:
-      - name: Generate ShopRemote2 version file
+      - name: Generate ShopRemote3 version file
         run: |
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
             UPSTREAM_VERNAME="${GITHUB_REF##refs/tags/}"
@@ -30,7 +30,7 @@ jobs:
           echo "versionCode=$UPSTREAM_VERCODE" >> shopremote2-version.txt
         shell: bash
 
-      - name: Publish ShopRemote2 version file
+      - name: Publish ShopRemote3 version file
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true

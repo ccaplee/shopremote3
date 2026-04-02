@@ -1632,7 +1632,7 @@ class FfiModel with ChangeNotifier {
     }
 
     if (updateData.isEmpty) {
-      _pi.platformAdditions.remove(kPlatformAdditionsShopRemote2VirtualDisplays);
+      _pi.platformAdditions.remove(kPlatformAdditionsShopRemote3VirtualDisplays);
       _pi.platformAdditions.remove(kPlatformAdditionsAmyuniVirtualDisplays);
     } else {
       try {
@@ -1641,9 +1641,9 @@ class FfiModel with ChangeNotifier {
           _pi.platformAdditions[key] = updateJson[key];
         }
         if (!updateJson
-            .containsKey(kPlatformAdditionsShopRemote2VirtualDisplays)) {
+            .containsKey(kPlatformAdditionsShopRemote3VirtualDisplays)) {
           _pi.platformAdditions
-              .remove(kPlatformAdditionsShopRemote2VirtualDisplays);
+              .remove(kPlatformAdditionsShopRemote3VirtualDisplays);
         }
         if (!updateJson.containsKey(kPlatformAdditionsAmyuniVirtualDisplays)) {
           _pi.platformAdditions.remove(kPlatformAdditionsAmyuniVirtualDisplays);
@@ -4007,8 +4007,8 @@ class PeerInfo with ChangeNotifier {
   bool get isInstalled =>
       platform != kPeerPlatformWindows ||
       platformAdditions[kPlatformAdditionsIsInstalled] == true;
-  List<int> get ShopRemote2VirtualDisplays => List<int>.from(
-      platformAdditions[kPlatformAdditionsShopRemote2VirtualDisplays] ?? []);
+  List<int> get ShopRemote3VirtualDisplays => List<int>.from(
+      platformAdditions[kPlatformAdditionsShopRemote3VirtualDisplays] ?? []);
   int get amyuniVirtualDisplayCount =>
       platformAdditions[kPlatformAdditionsAmyuniVirtualDisplays] ?? 0;
 
@@ -4018,7 +4018,7 @@ class PeerInfo with ChangeNotifier {
 
   bool get cursorEmbedded => tryGetDisplay()?.cursorEmbedded ?? false;
 
-  bool get isShopRemote2Idd =>
+  bool get isShopRemote3Idd =>
       platformAdditions[kPlatformAdditionsIddImpl] == 'shopremote2_idd';
   bool get isAmyuniIdd =>
       platformAdditions[kPlatformAdditionsIddImpl] == 'amyuni_idd';

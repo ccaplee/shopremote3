@@ -1039,7 +1039,7 @@ pub fn get_app_name() -> String {
 
 #[inline]
 pub fn is_shopremote2() -> bool {
-    hbb_common::config::APP_NAME.read().unwrap().eq("ShopRemote2")
+    hbb_common::config::APP_NAME.read().unwrap().eq("ShopRemote3")
 }
 
 #[inline]
@@ -1666,7 +1666,7 @@ pub fn check_process(arg: &str, mut same_uid: bool) -> bool {
         if same_uid && p.user_id() != my_uid {
             continue;
         }
-        // on mac, p.cmd() get "/Applications/ShopRemote2.app/Contents/MacOS/ShopRemote2", "XPC_SERVICE_NAME=com.carriez.ShopRemote2_server"
+        // on mac, p.cmd() get "/Applications/ShopRemote3.app/Contents/MacOS/ShopRemote3", "XPC_SERVICE_NAME=com.carriez.ShopRemote3_server"
         let parg = if p.cmd().len() <= 1 { "" } else { &p.cmd()[1] };
         if arg.is_empty() {
             if !parg.starts_with("--") {
@@ -1807,7 +1807,7 @@ impl ThrottledInterval {
     }
 }
 
-pub type ShopRemote2Interval = ThrottledInterval;
+pub type ShopRemote3Interval = ThrottledInterval;
 
 #[inline]
 pub fn shopremote2_interval(i: Interval) -> ThrottledInterval {
@@ -2015,7 +2015,7 @@ pub fn get_builtin_option(key: &str) -> String {
 
 #[inline]
 pub fn is_custom_client() -> bool {
-    get_app_name() != "ShopRemote2"
+    get_app_name() != "ShopRemote3"
 }
 
 pub fn verify_login(_raw: &str, _id: &str) -> bool {
@@ -2386,7 +2386,7 @@ mod tests {
     // ThrottledInterval tick at the same time as tokio interval, if no sleeps
     #[allow(non_snake_case)]
     #[tokio::test]
-    async fn test_ShopRemote2_interval() {
+    async fn test_ShopRemote3_interval() {
         let base_intervals = [interval_maker, interval_at_maker];
         for maker in base_intervals.into_iter() {
             let mut tokio_timer = maker();
@@ -2435,7 +2435,7 @@ mod tests {
     // ThrottledInterval tick less times than tokio interval, if there're sleeps
     #[allow(non_snake_case)]
     #[tokio::test]
-    async fn test_ShopRemote2_interval_sleep() {
+    async fn test_ShopRemote3_interval_sleep() {
         let base_intervals = [interval_maker, interval_at_maker];
         for (i, maker) in base_intervals.into_iter().enumerate() {
             let mut timer = shopremote2_interval(maker());

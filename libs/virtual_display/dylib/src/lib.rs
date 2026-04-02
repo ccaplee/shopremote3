@@ -12,7 +12,7 @@ use std::sync::Mutex;
 #[cfg(windows)]
 lazy_static::lazy_static! {
     // If device is uninstalled though "Device Manager" Window.
-    // ShopRemote2 is unable to handle device any more...
+    // ShopRemote3 is unable to handle device any more...
     static ref H_SW_DEVICE: Mutex<u64> = Mutex::new(0);
 }
 
@@ -57,7 +57,7 @@ pub fn install_update_driver(_reboot_required: &mut bool) -> ResultType<()> {
     unsafe {
         {
             // Device must be created before install driver.
-            // https://github.com/fufesou/ShopRemote2IddDriver/issues/1
+            // https://github.com/fufesou/ShopRemote3IddDriver/issues/1
             if let Err(e) = create_device() {
                 bail!("{}", e);
             }

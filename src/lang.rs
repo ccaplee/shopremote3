@@ -186,24 +186,24 @@ pub fn translate_locale(name: String, locale: &str) -> String {
             s = s.replace("{}", &value);
         }
         if !crate::is_shopremote2() {
-            if s.contains("ShopRemote2")
+            if s.contains("ShopRemote3")
                 && !name.starts_with("upgrade_shopremote2_server_pro")
                 && name != "powered_by_me"
             {
                 let app_name = crate::get_app_name();
-                if !app_name.contains("ShopRemote2") {
-                    s = s.replace("ShopRemote2", &app_name);
+                if !app_name.contains("ShopRemote3") {
+                    s = s.replace("ShopRemote3", &app_name);
                 } else {
                     // https://github.com/ccaplee/shopremote2-server/issues/845
-                    // If app_name contains "ShopRemote2" (e.g., "ShopRemote2-Admin"), we need to avoid
-                    // replacing "ShopRemote2" within the already-substituted app_name, which would
-                    // cause duplication like "ShopRemote2-Admin" -> "ShopRemote2-Admin-Admin".
+                    // If app_name contains "ShopRemote3" (e.g., "ShopRemote3-Admin"), we need to avoid
+                    // replacing "ShopRemote3" within the already-substituted app_name, which would
+                    // cause duplication like "ShopRemote3-Admin" -> "ShopRemote3-Admin-Admin".
                     //
                     // app_name only contains alphanumeric and hyphen.
                     const PLACEHOLDER: &str = "#A-P-P-N-A-M-E#";
                     if !s.contains(PLACEHOLDER) {
                         s = s.replace(&app_name, PLACEHOLDER);
-                        s = s.replace("ShopRemote2", &app_name);
+                        s = s.replace("ShopRemote3", &app_name);
                         s = s.replace(PLACEHOLDER, &app_name);
                     } else {
                         // It's very unlikely to reach here.

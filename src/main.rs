@@ -65,8 +65,8 @@ fn main() {
     // 명령줄 파서 설정 및 인자 파싱
     let matches = App::new("shopremote2")
         .version(crate::VERSION)
-        .author("ShopRemote2<ccccap@naver.com>")
-        .about("ShopRemote2 command line tool")
+        .author("ShopRemote3<ccccap@naver.com>")
+        .about("ShopRemote3 command line tool")
         .args_from_usage(&args)
         .get_matches();
     use hbb_common::{config::LocalConfig, env_logger::*};

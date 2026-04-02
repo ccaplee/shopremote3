@@ -3,7 +3,7 @@
 <plist version="1.0">
     <dict>
         <key>Label</key>
-        <string>com.carriez.ShopRemote2_service</string>
+        <string>com.carriez.ShopRemote3_service</string>
 
 	<key>AssociatedBundleIdentifiers</key>
 	<string>com.shopremote2.app</string>
@@ -16,12 +16,12 @@
         <array>
         <string>/bin/sh</string>
         <string>-c</string>
-        <string>/Applications/ShopRemote2.app/Contents/MacOS/service</string>
+        <string>/Applications/ShopRemote3.app/Contents/MacOS/service</string>
         </array>
         <key>RunAtLoad</key>
         <true/>
         <key>WorkingDirectory</key>
-        <string>/Applications/ShopRemote2.app/Contents/MacOS/</string>
+        <string>/Applications/ShopRemote3.app/Contents/MacOS/</string>
         <key>StandardErrorPath</key>
         <string>/tmp/shopremote2_service.err</string>
         <key>StandardOutPath</key>

@@ -1,15 +1,15 @@
 [package]
-name = "shopremote2"
-version = "2.0.1"
-authors = ["shopremote2 <ccccap@naver.com>"]
+name = "shopremote3"
+version = "3.0.1"
+authors = ["shopremote3 <ccccap@naver.com>"]
 edition = "2021"
 build= "build.rs"
-description = "ShopRemote2 Remote Desktop"
-default-run = "shopremote2"
+description = "ShopRemote3 Remote Desktop"
+default-run = "shopremote3"
 rust-version = "1.75"
 
 [lib]
-name = "libshopremote2"
+name = "libshopremote3"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [[bin]]
@@ -42,6 +42,7 @@ unix-file-copy-paste = [
 ]
 screencapturekit = ["cpal/screencapturekit"]
 host-only = []
+remote-only = []
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -215,9 +216,9 @@ libxdo-sys = { path = "libs/libxdo-sys-stub" }
 
 [package.metadata.winres]
 LegalCopyright = "Copyright © 2025 Purslane Ltd. All rights reserved."
-ProductName = "ShopRemote2"
-FileDescription = "ShopRemote2 Remote Desktop"
-OriginalFilename = "shopremote2.exe"
+ProductName = "ShopRemote3"
+FileDescription = "ShopRemote3 Remote Desktop"
+OriginalFilename = "shopremote3.exe"
 
 [target.'cfg(target_os="windows")'.build-dependencies]
 winres = "0.1"
@@ -233,8 +234,8 @@ hound = "3.5"
 docopt = "1.1"
 
 [package.metadata.bundle]
-name = "ShopRemote2"
-identifier = "com.shopremote2.app"
+name = "ShopRemote3"
+identifier = "com.shopremote3.app"
 icon = ["res/32x32.png", "res/128x128.png", "res/128x128@2x.png"]
 osx_minimum_system_version = "10.14"
 

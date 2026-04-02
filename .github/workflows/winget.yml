@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: vedantmgoyal9/winget-releaser@main
         with:
-          identifier: ShopRemote2.ShopRemote2
+          identifier: ShopRemote3.ShopRemote3
           version: "2.0.1"
           release-tag: "2.0.1"
           token: ${{ secrets.WINGET_TOKEN }}

@@ -82,7 +82,7 @@ fn create_windows(event_loop: &EventLoop<(String, CustomEvent)>) -> ResultType<V
         };
 
         let window_builder = WindowBuilder::new()
-            .with_title("ShopRemote2 whiteboard")
+            .with_title("ShopRemote3 whiteboard")
             .with_transparent(true)
             .with_decorations(false)
             .with_position(monitor.position())

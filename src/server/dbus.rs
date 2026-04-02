@@ -23,7 +23,7 @@ struct DbusError(String);
 
 impl fmt::Display for DbusError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ShopRemote2 DBus Error: {}", self.0)
+        write!(f, "ShopRemote3 DBus Error: {}", self.0)
     }
 }
 

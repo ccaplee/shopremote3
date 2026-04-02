@@ -9,10 +9,12 @@ pub use platform::{
     set_cursor_pos, start_os_service,
 };
 #[cfg(not(any(target_os = "ios")))]
+#[cfg(not(feature = "remote-only"))]
 /// cbindgen:ignore
 // 원격 제어를 위한 서버 기능 모듈
 mod server;
 #[cfg(not(any(target_os = "ios")))]
+#[cfg(not(feature = "remote-only"))]
 pub use self::server::*;
 // 원격 접속 클라이언트 기능 모듈
 #[cfg(not(feature = "host-only"))]
@@ -90,6 +92,7 @@ mod whiteboard;
 mod updater;
 
 // 연결 관리자 UI 인터페이스
+#[cfg(not(feature = "remote-only"))]
 mod ui_cm_interface;
 // 메인 UI 인터페이스
 mod ui_interface;
@@ -117,4 +120,9 @@ mod kcp_stream;
 /// Returns true if this build is compiled with the host-only feature flag
 pub fn is_host_only_build() -> bool {
     cfg!(feature = "host-only")
+}
+
+/// Returns true if this build is compiled with the remote-only feature flag
+pub fn is_remote_only_build() -> bool {
+    cfg!(feature = "remote-only")
 }

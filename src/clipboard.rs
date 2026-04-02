@@ -14,7 +14,7 @@ pub const FILE_CLIPBOARD_NAME: &'static str = "file-clipboard";
 /// 클립보드 변경 감지 간격 (밀리초)
 pub const CLIPBOARD_INTERVAL: u64 = 333;
 
-/// ShopRemote2 클립보드 소유자 식별을 위한 특수 포맷
+/// ShopRemote3 클립보드 소유자 식별을 위한 특수 포맷
 /// 호스트와 클라이언트의 클립보드 소유권을 구분하는 데 사용됩니다
 const RUSTDESK_CLIPBOARD_OWNER_FORMAT: &'static str = "dyn.com.shopremote2.owner";
 
@@ -450,7 +450,7 @@ impl ClipboardContext {
                 #[cfg(target_os = "macos")]
                 let is_kde_x11 = false;
                 let clear_holder_text = if is_kde_x11 {
-                    "ShopRemote2 placeholder to clear the file clipboard"
+                    "ShopRemote3 placeholder to clear the file clipboard"
                 } else {
                     ""
                 }

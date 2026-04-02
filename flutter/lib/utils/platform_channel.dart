@@ -5,7 +5,7 @@ import 'package:shopremote2/common.dart';
 
 enum SystemWindowTheme { light, dark }
 
-/// The platform channel for ShopRemote2.
+/// The platform channel for ShopRemote3.
 class RdPlatformChannel {
   RdPlatformChannel._();
 

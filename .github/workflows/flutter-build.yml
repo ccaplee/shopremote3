@@ -1,4 +1,4 @@
-name: Build the flutter version of the ShopRemote2
+name: Build the flutter version of the ShopRemote3
 
 on:
   workflow_call:
@@ -54,8 +54,8 @@ jobs:
   generate-bridge:
     uses: ./.github/workflows/bridge.yml
 
-  build-ShopRemote2TempTopMostWindow:
-    uses: ./.github/workflows/third-party-ShopRemote2TempTopMostWindow.yml
+  build-ShopRemote3TempTopMostWindow:
+    uses: ./.github/workflows/third-party-ShopRemote3TempTopMostWindow.yml
     with:
       upload-artifact: ${{ inputs.upload-artifact }}
       target: windows-2022
@@ -67,7 +67,7 @@ jobs:
 
   build-for-windows-flutter:
     name: ${{ matrix.job.target }}
-    needs: [build-ShopRemote2TempTopMostWindow, generate-bridge]
+    needs: [build-ShopRemote3TempTopMostWindow, generate-bridge]
     runs-on: ${{ matrix.job.os }}
     strategy:
       fail-fast: false
@@ -168,7 +168,7 @@ jobs:
 
       - name: Build shopremote2
         run: |
-          # Windows: build ShopRemote2
+          # Windows: build ShopRemote3
           python3 .\build.py --portable --hwcodec --flutter --vram --skip-portable-pack
           mv ./flutter/build/windows/x64/runner/Release ./shopremote2
 
@@ -194,7 +194,7 @@ jobs:
                 Write-Output "rustdesk_printer_driver_v4-1.4, checksums match, extract the file."
                 Expand-Archive rustdesk_printer_driver_v4-1.4.zip -DestinationPath .
                 mkdir ./shopremote2/drivers
-                mv -Force .\rustdesk_printer_driver_v4-1.4 ./shopremote2/drivers/ShopRemote2PrinterDriver
+                mv -Force .\rustdesk_printer_driver_v4-1.4 ./shopremote2/drivers/ShopRemote3PrinterDriver
                 Expand-Archive printer_driver_adapter.zip -DestinationPath .
                 mv -Force .\printer_driver_adapter.dll ./shopremote2
             } elseif ($checksum_driver -ne $downloadsum_driver.Hash) {
@@ -222,7 +222,7 @@ jobs:
             ls -l ./libs/portable/Runner.res;
           fi
 
-      - name: Download ShopRemote2TempTopMostWindow artifacts
+      - name: Download ShopRemote3TempTopMostWindow artifacts
         uses: actions/download-artifact@master
         if: ${{ inputs.upload-artifact }}
         with:
@@ -727,7 +727,7 @@ jobs:
       - name: Ad-hoc codesign app
         if: env.UPLOAD_ARTIFACT == 'true' && env.MACOS_P12_BASE64 == null
         run: |
-          codesign --force --deep -s - ./flutter/build/macos/Build/Products/Release/ShopRemote2.app
+          codesign --force --deep -s - ./flutter/build/macos/Build/Products/Release/ShopRemote3.app
 
       - name: create unsigned dmg
         if: env.UPLOAD_ARTIFACT == 'true'
@@ -735,7 +735,7 @@ jobs:
           CREATE_DMG="$(command -v create-dmg)"
           CREATE_DMG="$(readlink -f "$CREATE_DMG")"
           sed -i -e 's/MAXIMUM_UNMOUNTING_ATTEMPTS=3/MAXIMUM_UNMOUNTING_ATTEMPTS=7/' "$CREATE_DMG"
-          create-dmg --icon "ShopRemote2.app" 200 190 --hide-extension "ShopRemote2.app" --window-size 800 400 --app-drop-link 600 185 shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.dmg ./flutter/build/macos/Build/Products/Release/ShopRemote2.app
+          create-dmg --icon "ShopRemote3.app" 200 190 --hide-extension "ShopRemote3.app" --window-size 800 400 --app-drop-link 600 185 shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.dmg ./flutter/build/macos/Build/Products/Release/ShopRemote3.app
 
       - name: Upload unsigned macOS app
         if: env.UPLOAD_ARTIFACT == 'true'
@@ -756,8 +756,8 @@ jobs:
           security unlock-keychain -p ${{ secrets.MACOS_P12_PASSWORD }} shopremote2.keychain
           # start sign the shopremote2.app and dmg
           rm -rf *.dmg || true
-          codesign --force --options runtime -s ${{ secrets.MACOS_CODESIGN_IDENTITY }} --deep --strict ./flutter/build/macos/Build/Products/Release/ShopRemote2.app -vvv
-          create-dmg --icon "ShopRemote2.app" 200 190 --hide-extension "ShopRemote2.app" --window-size 800 400 --app-drop-link 600 185 shopremote2-${{ env.VERSION }}.dmg ./flutter/build/macos/Build/Products/Release/ShopRemote2.app
+          codesign --force --options runtime -s ${{ secrets.MACOS_CODESIGN_IDENTITY }} --deep --strict ./flutter/build/macos/Build/Products/Release/ShopRemote3.app -vvv
+          create-dmg --icon "ShopRemote3.app" 200 190 --hide-extension "ShopRemote3.app" --window-size 800 400 --app-drop-link 600 185 shopremote2-${{ env.VERSION }}.dmg ./flutter/build/macos/Build/Products/Release/ShopRemote3.app
           codesign --force --options runtime -s ${{ secrets.MACOS_CODESIGN_IDENTITY }} --deep --strict shopremote2-${{ env.VERSION }}.dmg -vvv
           # notarize the shopremote2-${{ env.VERSION }}.dmg
           rcodesign notary-submit --api-key-path ${{ github.workspace }}/shopremote2.json  --staple shopremote2-${{ env.VERSION }}.dmg
@@ -1008,7 +1008,7 @@ jobs:
             ;;
           esac
 
-      - name: Upload ShopRemote2 library to Artifacts
+      - name: Upload ShopRemote3 library to Artifacts
         uses: actions/upload-artifact@master
         with:
           name: libshopremote2.so.${{ matrix.job.target }}
@@ -1205,25 +1205,25 @@ jobs:
           name: bridge-artifact
           path: ./
 
-      - name: Download ShopRemote2 library from Artifacts
+      - name: Download ShopRemote3 library from Artifacts
         uses: actions/download-artifact@master
         with:
           name: libshopremote2.so.aarch64-linux-android
           path: ./flutter/android/app/src/main/jniLibs/arm64-v8a
 
-      - name: Download ShopRemote2 library from Artifacts
+      - name: Download ShopRemote3 library from Artifacts
         uses: actions/download-artifact@master
         with:
           name: libshopremote2.so.armv7-linux-androideabi
           path: ./flutter/android/app/src/main/jniLibs/armeabi-v7a
 
-      - name: Download ShopRemote2 library from Artifacts
+      - name: Download ShopRemote3 library from Artifacts
         uses: actions/download-artifact@master
         with:
           name: libshopremote2.so.x86_64-linux-android
           path: ./flutter/android/app/src/main/jniLibs/x86_64
 
-      - name: Download ShopRemote2 library from Artifacts
+      - name: Download ShopRemote3 library from Artifacts
         if: ${{ env.reltype == 'debug' }}
         uses: actions/download-artifact@master
         with:

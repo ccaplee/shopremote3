@@ -36,7 +36,7 @@ pub const WIN_TOPMOST_INJECTED_PROCESS_EXE: &'static str = "RuntimeBroker_shopre
 // 실제 주입될 프로세스 (위와 동일)
 pub const INJECTED_PROCESS_EXE: &'static str = WIN_TOPMOST_INJECTED_PROCESS_EXE;
 // 프라이버시 보호 윈도우의 클래스명/윈도우명
-pub(super) const PRIVACY_WINDOW_NAME: &'static str = "ShopRemote2PrivacyWindow";
+pub(super) const PRIVACY_WINDOW_NAME: &'static str = "ShopRemote3PrivacyWindow";
 
 /// 프라이버시 모드 윈도우 프로세스의 핸들을 관리하는 구조체입니다.
 ///

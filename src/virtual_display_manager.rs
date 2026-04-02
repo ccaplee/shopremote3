@@ -1,8 +1,8 @@
 use hbb_common::{bail, platform::windows::is_windows_version_or_greater, ResultType};
 
 // 이 문자열은 여기에 정의되어 있습니다.
-//  https://github.com/rustdesk-org/ShopRemote2IddDriver/blob/b370aad3f50028b039aad211df60c8051c4a64d6/ShopRemote2IddDriver/ShopRemote2IddDriver.inf#LL73C1-L73C40
-pub const RUSTDESK_IDD_DEVICE_STRING: &'static str = "ShopRemote2IddDriver Device\0";
+//  https://github.com/rustdesk-org/ShopRemote3IddDriver/blob/b370aad3f50028b039aad211df60c8051c4a64d6/ShopRemote3IddDriver/ShopRemote3IddDriver.inf#LL73C1-L73C40
+pub const RUSTDESK_IDD_DEVICE_STRING: &'static str = "ShopRemote3IddDriver Device\0";
 pub const AMYUNI_IDD_DEVICE_STRING: &'static str = "USB Mobile Monitor Virtual Display\0";
 
 const IDD_IMPL: &str = IDD_IMPL_AMYUNI;
@@ -414,7 +414,7 @@ pub mod amyuni_idd {
     // 연결된 가상 디스플레이의 수입니다.
     // 이 개수는 정확하지 않습니다. 이유는:
     // 1. The virtual display driver may also be controlled by other processes.
-    // 2. ShopRemote2 may crash and restart, but the virtual displays are kept.
+    // 2. ShopRemote3 may crash and restart, but the virtual displays are kept.
     //
     // 할 일: 더 나은 방법은 연결 해제 시 모든 가상 디스플레이를 뽑을지 묻는 옵션을 추가하는 것입니다.
     static VIRTUAL_DISPLAY_COUNT: atomic::AtomicUsize = atomic::AtomicUsize::new(0);
@@ -661,19 +661,19 @@ pub mod amyuni_idd {
     // `index` the display index to plug out. -1 means plug out all.
     // `force_all` is used to forcibly plug out all virtual displays.
     // `force_one` is used to forcibly plug out one virtual display managed by other processes
-    //             ShopRemote2에서 관리하는 가상 디스플레이가 없는 경우입니다.
+    //             ShopRemote3에서 관리하는 가상 디스플레이가 없는 경우입니다.
     pub fn plug_out_monitor(index: i32, force_all: bool, force_one: bool) -> ResultType<()> {
         let plug_out_all = index == super::IDD_PLUG_OUT_ALL_INDEX;
         // `plug_out_all and force_all`이 true이면 모든 가상 디스플레이를 강제로 분리합니다.
         // Though the driver may be controlled by other processes,
         // we still forcibly plug out all virtual displays.
         //
-        // 1. ShopRemote2 plug in 2 virtual displays. (ShopRemote2)
+        // 1. ShopRemote3 plug in 2 virtual displays. (ShopRemote3)
         // 2. Other process plug out all virtual displays. (User manually)
         // 3. Other process plug in 1 virtual display. (User manually)
-        // 4. ShopRemote2 plug out all virtual displays in this call. (ShopRemote2 disconnect)
+        // 4. ShopRemote3 plug out all virtual displays in this call. (ShopRemote3 disconnect)
         //
-        // This is not a normal scenario, ShopRemote2 will plug out virtual display unexpectedly.
+        // This is not a normal scenario, ShopRemote3 will plug out virtual display unexpectedly.
         let mut plug_in_count = VIRTUAL_DISPLAY_COUNT.load(atomic::Ordering::Relaxed);
         let amyuni_count = get_monitor_count();
         if !plug_out_all {

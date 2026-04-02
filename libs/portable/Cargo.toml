@@ -1,8 +1,8 @@
 [package]
-name = "shopremote2-portable-packer"
+name = "shopremote3-portable-packer"
 version = "2.0.1"
 edition = "2021"
-description = "ShopRemote2 Remote Desktop"
+description = "ShopRemote3 Remote Desktop"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -27,9 +27,9 @@ native-windows-gui = {version = "1.0", default-features = false, features = ["an
 
 [package.metadata.winres]
 LegalCopyright = "Copyright © 2025 Purslane Ltd. All rights reserved."
-ProductName = "ShopRemote2"
-OriginalFilename = "shopremote2.exe"
-FileDescription = "ShopRemote2 Remote Desktop"
+ProductName = "ShopRemote3"
+OriginalFilename = "shopremote3.exe"
+FileDescription = "ShopRemote3 Remote Desktop"
 #ProductVersion = ""
 
 [target.'cfg(target_os="windows")'.build-dependencies]

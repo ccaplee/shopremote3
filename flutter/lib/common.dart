@@ -81,6 +81,9 @@ DesktopType? desktopType;
 /// Host-only mode flag: when true, UI hides remote control/client features
 bool isHostOnly = false;
 
+/// Remote-only mode flag: when true, UI hides host/server features
+bool isRemoteOnly = false;
+
 // Tolerance used for floating-point position comparisons to avoid precision errors.
 const double _kPositionEpsilon = 1e-6;
 
@@ -254,6 +257,7 @@ class MyTheme {
   MyTheme._();
 
   static const Color grayBg = Color(0xFFEFEFF2);
+  // Note: accent is now dynamic based on app mode, use getPrimaryColor() instead
   static const Color accent = Color(0xFF00B894);
   static const Color accent50 = Color(0x7700B894);
   static const Color accent80 = Color(0xAA00B894);
@@ -315,6 +319,21 @@ class MyTheme {
     return TooltipThemeData(
       waitDuration: Duration(seconds: 1, milliseconds: 500),
     );
+  }
+
+  /// Get primary color based on app mode
+  /// Red for Host-only mode, Blue for Remote-only mode, Green for default
+  static Color getPrimaryColor() {
+    if (isHostOnly) return const Color(0xFFE74C3C); // Red for Host
+    if (isRemoteOnly) return const Color(0xFF2980B9); // Blue for Remote
+    return const Color(0xFF00B894); // Default green
+  }
+
+  /// Get accent color based on app mode
+  static Color getAccentColor() {
+    if (isHostOnly) return const Color(0xFFC0392B); // Darker red
+    if (isRemoteOnly) return const Color(0xFF3498DB); // Lighter blue
+    return const Color(0xFF00B894); // Default green
   }
 
   // Dialogs
@@ -405,7 +424,7 @@ class MyTheme {
             ),
           )
         : null,
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
         titleLarge: TextStyle(fontSize: 19, color: Colors.black87),
         titleSmall: TextStyle(fontSize: 14, color: Colors.black87),
         bodySmall: TextStyle(fontSize: 12, color: Colors.black87, height: 1.25),
@@ -434,7 +453,7 @@ class MyTheme {
         : mobileTextButtonTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyTheme.accent,
+        backgroundColor: MyTheme.getPrimaryColor(),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
@@ -457,7 +476,7 @@ class MyTheme {
         style:
             MenuStyle(backgroundColor: MaterialStatePropertyAll(Colors.white))),
     colorScheme: ColorScheme.light(
-        primary: Color(0xFF00B894), secondary: accent, background: grayBg),
+        primary: MyTheme.getPrimaryColor(), secondary: MyTheme.getAccentColor(), background: grayBg),
     popupMenuTheme: PopupMenuThemeData(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -537,7 +556,7 @@ class MyTheme {
         : mobileTextButtonTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyTheme.accent,
+        backgroundColor: MyTheme.getPrimaryColor(),
         foregroundColor: Colors.white,
         disabledForegroundColor: Colors.white70,
         disabledBackgroundColor: Colors.white10,
@@ -565,8 +584,8 @@ class MyTheme {
         style: MenuStyle(
             backgroundColor: MaterialStatePropertyAll(Color(0xFF121212)))),
     colorScheme: ColorScheme.dark(
-      primary: Color(0xFF00B894),
-      secondary: accent,
+      primary: MyTheme.getPrimaryColor(),
+      secondary: MyTheme.getAccentColor(),
       background: Color(0xFF24252B),
     ),
     popupMenuTheme: PopupMenuThemeData(
@@ -2782,7 +2801,7 @@ Future<void> onActiveWindowChanged() async {
     } catch (err) {
       debugPrintStack(label: "$err");
     } finally {
-      debugPrint("Start closing ShopRemote2...");
+      debugPrint("Start closing ShopRemote3...");
       await windowManager.setPreventClose(false);
       await windowManager.close();
       if (isMacOS) {
@@ -2798,9 +2817,9 @@ Future<void> onActiveWindowChanged() async {
         //
         //```
         // embedder.cc (2725): 'FlutterPlatformMessageCreateResponseHandle' returned 'kInvalidArguments'. Engine handle was invalid.
-        // 2024-11-11 11:41:11.546 ShopRemote2[90272:2567686] Failed to create a FlutterPlatformMessageResponseHandle (2)
+        // 2024-11-11 11:41:11.546 ShopRemote3[90272:2567686] Failed to create a FlutterPlatformMessageResponseHandle (2)
         // embedder.cc (2672): 'FlutterEngineSendPlatformMessage' returned 'kInvalidArguments'. Invalid engine handle.
-        // 2024-11-11 11:41:11.565 ShopRemote2[90272:2567686] Failed to send message to Flutter engine on channel 'flutter/lifecycle' (2).
+        // 2024-11-11 11:41:11.565 ShopRemote3[90272:2567686] Failed to send message to Flutter engine on channel 'flutter/lifecycle' (2).
         // ```
         periodic_immediate(
             Duration(milliseconds: 30), RdPlatformChannel.instance.terminate);

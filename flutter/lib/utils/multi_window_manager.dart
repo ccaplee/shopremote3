@@ -52,10 +52,10 @@ class MultiWindowCallResult {
 /// Window Manager
 /// mainly use it in `Main Window`
 /// use it in sub window is not recommended
-class ShopRemote2MultiWindowManager {
-  ShopRemote2MultiWindowManager._();
+class ShopRemote3MultiWindowManager {
+  ShopRemote3MultiWindowManager._();
 
-  static final instance = ShopRemote2MultiWindowManager._();
+  static final instance = ShopRemote3MultiWindowManager._();
 
   final Set<int> _inactiveWindows = {};
   final Set<int> _activeWindows = {};
@@ -578,4 +578,4 @@ class ShopRemote2MultiWindowManager {
   }
 }
 
-final rustDeskWinManager = ShopRemote2MultiWindowManager.instance;
+final rustDeskWinManager = ShopRemote3MultiWindowManager.instance;

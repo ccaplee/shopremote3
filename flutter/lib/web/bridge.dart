@@ -1609,8 +1609,8 @@ class RustdeskImpl {
   }
 
   bool isCustomClient({dynamic hint}) {
-    // is_custom_client() checks if app name is not "ShopRemote2"
-    return mainGetAppNameSync(hint: hint) != "ShopRemote2";
+    // is_custom_client() checks if app name is not "ShopRemote3"
+    return mainGetAppNameSync(hint: hint) != "ShopRemote3";
   }
 
   bool isDisableSettings({dynamic hint}) {
