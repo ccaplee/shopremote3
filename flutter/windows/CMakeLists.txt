@@ -103,9 +103,9 @@ endif()
 # flutter_rust_bridge
 set(RUSTDESK_LIB_BUILD_TYPE $<IF:$<CONFIG:Debug>,debug,release>)
 message(STATUS "shopremote2 lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
-set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/libshopremote2.dll")
+set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/libshopremote3.dll")
 install(FILES "${RUSTDESK_LIB}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-COMPONENT Runtime RENAME libshopremote2.dll)
+COMPONENT Runtime RENAME libshopremote3.dll)
 
 # Fully re-copy the assets directory on each build to avoid having stale files
 # from a previous install.

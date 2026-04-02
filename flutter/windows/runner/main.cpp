@@ -22,10 +22,10 @@ const wchar_t* getWindowClassName();
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command)
 {
-  HINSTANCE hInstance = LoadLibraryA("libshopremote2.dll");
+  HINSTANCE hInstance = LoadLibraryA("libshopremote3.dll");
   if (!hInstance)
   {
-    std::cout << "Failed to load libshopremote2.dll." << std::endl;
+    std::cout << "Failed to load libshopremote3.dll." << std::endl;
     return EXIT_FAILURE;
   }
   FUNC_RUSTDESK_CORE_MAIN shopremote2_core_main =

@@ -1,7 +1,7 @@
 #include <dlfcn.h>
 #include "my_application.h"
 
-#define RUSTDESK_LIB_PATH "libshopremote2.so"
+#define RUSTDESK_LIB_PATH "libshopremote3.so"
 typedef bool (*ShopRemote2CoreMain)();
 bool gIsConnectionManager = false;
 

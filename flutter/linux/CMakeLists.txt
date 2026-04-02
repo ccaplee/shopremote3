@@ -189,9 +189,9 @@ set(RUSTDESK_LIB_BUILD_TYPE $<IF:$<CONFIG:Debug>,debug,release>)
 string(TOLOWER ${CMAKE_BUILD_TYPE} ${RUSTDESK_LIB_BUILD_TYPE})
 message(STATUS "shopremote2 lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
 
-set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/liblibshopremote2.so")
+set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/liblibshopremote3.so")
 install(FILES "${RUSTDESK_LIB}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-COMPONENT Runtime RENAME libshopremote2.so)
+COMPONENT Runtime RENAME libshopremote3.so)
 
 # Fully re-copy the assets directory on each build to avoid having stale files
 # from a previous install.
