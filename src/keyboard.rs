@@ -431,6 +431,7 @@ fn should_block_relative_mouse_shortcut(key: Key, is_press: bool) -> bool {
     // - macOS: Cmd+G
     // - Windows/Linux: Ctrl+Alt
     // Guard it to supported/eligible sessions to avoid blocking the chord unexpectedly.
+    #[cfg(not(feature = "host-only"))]
     if is_exit_relative_mouse_shortcut(key) {
         if !can_exit_relative_mouse_mode_from_grab_loop() {
             return false;

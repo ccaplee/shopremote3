@@ -998,21 +998,6 @@ impl InvokeUiSession for FlutterHandler {
         );
     }
 
-    fn is_multi_ui_session(&self) -> bool {
-        self.session_handlers.read().unwrap().len() > 1
-    }
-
-    fn set_current_display(&self, disp_idx: i32) {
-        if self.is_multi_ui_session() {
-            return;
-        }
-        self.push_event(
-            "follow_current_display",
-            &[("display_idx", &disp_idx.to_string())],
-            &[],
-        );
-    }
-
     fn on_connected(&self, _conn_type: ConnType) {}
 
     fn msgbox(&self, msgtype: &str, title: &str, text: &str, link: &str, retry: bool) {
@@ -1212,6 +1197,21 @@ impl InvokeUiSession for FlutterHandler {
 }
 
 impl FlutterHandler {
+    fn is_multi_ui_session(&self) -> bool {
+        self.session_handlers.read().unwrap().len() > 1
+    }
+
+    fn set_current_display(&self, disp_idx: i32) {
+        if self.is_multi_ui_session() {
+            return;
+        }
+        self.push_event(
+            "follow_current_display",
+            &[("display_idx", &disp_idx.to_string())],
+            &[],
+        );
+    }
+
     #[inline]
     fn on_rgba_soft_render(&self, display: usize, rgba: &mut scrap::ImageRgb) {
         // Give a chance for plugins or etc to hook a rgba data.
