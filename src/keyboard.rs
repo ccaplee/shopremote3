@@ -4,6 +4,7 @@ use crate::flutter;
 use crate::platform::windows::{get_char_from_vk, get_unicode_from_vk};
 #[cfg(not(any(feature = "flutter", feature = "cli")))]
 use crate::ui::CUR_SESSION;
+#[cfg(not(feature = "host-only"))]
 use crate::ui_session_interface::{InvokeUiSession, Session};
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 use crate::{client::get_key_state, common::GrabState};
@@ -161,6 +162,7 @@ pub mod client {
     /// keyboard_mode: 원격 시스템의 키보드 모드
     /// lock_modes: 원격 시스템의 Caps Lock, Num Lock 상태
     /// session: 키 이벤트를 전송할 세션
+    #[cfg(not(feature = "host-only"))]
     pub fn process_event_with_session<T: InvokeUiSession>(
         keyboard_mode: &str,
         event: &Event,
@@ -303,11 +305,11 @@ static mut IS_LEFT_OPTION_DOWN: bool = false;
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 fn get_keyboard_mode() -> String {
-    #[cfg(not(any(feature = "flutter", feature = "cli")))]
+    #[cfg(all(not(any(feature = "flutter", feature = "cli")), not(feature = "host-only")))]
     if let Some(session) = CUR_SESSION.lock().unwrap().as_ref() {
         return session.get_keyboard_mode();
     }
-    #[cfg(feature = "flutter")]
+    #[cfg(all(feature = "flutter", not(feature = "host-only")))]
     if let Some(session) = flutter::get_cur_session() {
         return session.get_keyboard_mode();
     }
@@ -360,6 +362,7 @@ fn is_exit_relative_mouse_shortcut(key: Key) -> bool {
 /// Note: This is Flutter-only. Sciter client does not support relative mouse mode.
 #[cfg(feature = "flutter")]
 #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
+#[cfg(not(feature = "host-only"))]
 fn notify_exit_relative_mouse_mode() {
     let session_id = flutter::get_cur_session_id();
     flutter::push_session_event(&session_id, "exit_relative_mouse_mode", vec![]);
@@ -370,6 +373,7 @@ fn notify_exit_relative_mouse_mode() {
 /// Returns true if the event should be blocked from being sent to the peer.
 #[cfg(feature = "flutter")]
 #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
+#[cfg(not(feature = "host-only"))]
 #[inline]
 fn can_exit_relative_mouse_mode_from_grab_loop() -> bool {
     // Only process exit shortcuts when relative mouse mode is actually active.
@@ -818,23 +822,23 @@ pub fn event_to_key_events(
 }
 
 pub fn send_key_event(key_event: &KeyEvent) {
-    #[cfg(not(any(feature = "flutter", feature = "cli")))]
+    #[cfg(all(not(any(feature = "flutter", feature = "cli")), not(feature = "host-only")))]
     if let Some(session) = CUR_SESSION.lock().unwrap().as_ref() {
         session.send_key_event(key_event);
     }
 
-    #[cfg(feature = "flutter")]
+    #[cfg(all(feature = "flutter", not(feature = "host-only")))]
     if let Some(session) = flutter::get_cur_session() {
         session.send_key_event(key_event);
     }
 }
 
 pub fn get_peer_platform() -> String {
-    #[cfg(not(any(feature = "flutter", feature = "cli")))]
+    #[cfg(all(not(any(feature = "flutter", feature = "cli")), not(feature = "host-only")))]
     if let Some(session) = CUR_SESSION.lock().unwrap().as_ref() {
         return session.peer_platform();
     }
-    #[cfg(feature = "flutter")]
+    #[cfg(all(feature = "flutter", not(feature = "host-only")))]
     if let Some(session) = flutter::get_cur_session() {
         return session.peer_platform();
     }
@@ -1379,9 +1383,11 @@ pub mod input_source {
             // It is ok to start grab loop multiple times.
             super::client::start_grab_loop();
             super::IS_RDEV_ENABLED.store(true, super::Ordering::SeqCst);
+            #[cfg(not(feature = "host-only"))]
             crate::flutter_ffi::session_enter_or_leave(session_id, true);
         } else if input_source == CONFIG_INPUT_SOURCE_2 {
             // No need to stop grab loop.
+            #[cfg(not(feature = "host-only"))]
             crate::flutter_ffi::session_enter_or_leave(session_id, false);
             super::IS_RDEV_ENABLED.store(false, super::Ordering::SeqCst);
         }

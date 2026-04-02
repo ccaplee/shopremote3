@@ -91,7 +91,8 @@ def patch_bridge_generated(filepath, mode):
         wire_name = f"wire_{func_name}"
         # bridge_generated.rs uses: fn wire_xxx_impl(...)
         # Match both patterns: with and without _impl suffix
-        pattern = rf'(fn {wire_name}(?:_impl)?\([^)]*\)\s*\{{)'
+        # Use [^{{]* instead of \s* to also match return types like -> Type
+        pattern = rf'(fn {wire_name}(?:_impl)?\([^)]*\)[^{{]*\{{)'
         matches = list(re.finditer(pattern, content))
         for match in matches:
             start = match.end()
@@ -134,7 +135,8 @@ def patch_bridge_io(filepath, mode):
     patched_count = 0
     for func_name in excluded:
         wire_name = f"wire_{func_name}"
-        pattern = rf'(pub extern "C" fn {wire_name}\([^)]*\)\s*\{{)'
+        # Use [^{{]* to also match return types like -> support::WireSyncReturn
+        pattern = rf'(pub extern "C" fn {wire_name}\([^)]*\)[^{{]*\{{)'
         matches = list(re.finditer(pattern, content))
         for match in matches:
             start = match.end()
