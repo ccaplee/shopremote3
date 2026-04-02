@@ -199,6 +199,7 @@ pub fn core_main() -> Option<Vec<String>> {
             crate::platform::try_remove_temp_update_files();
             hbb_common::config::PeerConfig::preload_peers();
         }
+        #[cfg(not(feature = "remote-only"))]
         std::thread::spawn(move || crate::start_server(false, no_server));
     } else {
         #[cfg(windows)]
@@ -393,11 +394,11 @@ pub fn core_main() -> Option<Vec<String>> {
             }
             #[cfg(windows)]
             crate::privacy_mode::restore_reg_connectivity(true, false);
-            #[cfg(any(target_os = "linux", target_os = "windows"))]
+            #[cfg(all(any(target_os = "linux", target_os = "windows"), not(feature = "remote-only")))]
             {
                 crate::start_server(true, false);
             }
-            #[cfg(target_os = "macos")]
+            #[cfg(all(target_os = "macos", not(feature = "remote-only")))]
             {
                 let handler = std::thread::spawn(move || crate::start_server(true, false));
                 crate::tray::start_tray();

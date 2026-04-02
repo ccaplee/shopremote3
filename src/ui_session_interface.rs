@@ -1574,7 +1574,7 @@ impl<T: InvokeUiSession> Session<T> {
 
     #[inline]
     pub fn request_voice_call(&self) {
-        #[cfg(target_os = "linux")]
+        #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
         std::thread::spawn(crate::ipc::start_pa);
         self.send(Data::NewVoiceCall);
     }

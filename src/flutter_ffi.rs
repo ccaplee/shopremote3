@@ -2276,10 +2276,10 @@ pub fn cm_check_click_time(conn_id: i32) {
     crate::ui_cm_interface::check_click_time(conn_id);
 }
 
+#[allow(unreachable_code)]
 pub fn cm_get_click_time() -> f64 {
     #[cfg(not(any(target_os = "ios", feature = "remote-only")))]
     return crate::ui_cm_interface::get_click_time() as _;
-    #[allow(unreachable_code)]
     0 as _
 }
 
@@ -2504,7 +2504,7 @@ pub fn main_has_gpu_texture_render() -> SyncReturn<bool> {
 }
 
 pub fn cm_init() {
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    #[cfg(not(any(target_os = "android", target_os = "ios", feature = "remote-only")))]
     crate::flutter::connection_manager::cm_init();
 }
 

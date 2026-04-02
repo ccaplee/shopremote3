@@ -952,7 +952,7 @@ impl Client {
         //
         // If we want to fix it, we can add a flag to indicate if session is active.
         // But I think it's not necessary to introduce complexity at this point.
-        #[cfg(feature = "flutter")]
+        #[cfg(all(feature = "flutter", not(feature = "host-only")))]
         if crate::flutter::sessions::has_sessions_running(ConnType::DEFAULT_CONN) {
             return;
         }
@@ -1146,9 +1146,15 @@ impl ClientClipboardHandler {
     }
 
     #[inline]
-    #[cfg(feature = "flutter")]
+    #[cfg(all(feature = "flutter", not(feature = "host-only")))]
     fn send_msg(&self, msg: Message, _is_file: bool) {
         crate::flutter::send_clipboard_msg(msg, _is_file);
+    }
+
+    #[inline]
+    #[cfg(all(feature = "flutter", feature = "host-only"))]
+    fn send_msg(&self, _msg: Message, _is_file: bool) {
+        // host-only mode: clipboard messages are not forwarded to sessions
     }
 
     #[cfg(not(feature = "flutter"))]

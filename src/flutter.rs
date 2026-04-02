@@ -1907,6 +1907,7 @@ pub fn stop_global_event_stream(app_type: String) {
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 fn session_send_touch_scale(
     session_id: SessionID,
     v: &serde_json::Value,
@@ -1926,6 +1927,7 @@ fn session_send_touch_scale(
 }
 
 #[inline]
+#[cfg(not(feature = "host-only"))]
 fn session_send_touch_pan(
     session_id: SessionID,
     v: &serde_json::Value,
@@ -1952,6 +1954,7 @@ fn session_send_touch_pan(
     }
 }
 
+#[cfg(not(feature = "host-only"))]
 fn session_send_touch_event(
     session_id: SessionID,
     v: &serde_json::Value,

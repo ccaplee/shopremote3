@@ -1,5 +1,4 @@
-// 키보드 입력 처리 모듈 (뷰어 측 전용 - host-only 빌드에서 제외)
-#[cfg(not(feature = "host-only"))]
+// 키보드 입력 처리 모듈 (서버/클라이언트 양쪽에서 사용)
 mod keyboard;
 /// cbindgen:ignore
 // 플랫폼별 기능을 제공하는 모듈 (Windows, macOS, Linux 등)
@@ -83,8 +82,8 @@ pub mod plugin;
 mod tray;
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
-#[cfg(not(feature = "host-only"))]
-// 화이트보드 기능 모듈
+#[cfg(not(any(feature = "host-only", feature = "remote-only")))]
+// 화이트보드 기능 모듈 (서버 display_service에 의존하므로 host/remote 분리 빌드에서 제외)
 mod whiteboard;
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]

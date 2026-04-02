@@ -112,7 +112,7 @@ async fn handle_new_stream(mut conn: Connection) {
     });
 }
 
-#[cfg(any(target_os = "windows", target_os = "linux"))]
+#[cfg(all(any(target_os = "windows", target_os = "linux"), not(feature = "remote-only")))]
 pub(super) fn get_displays_rect() -> ResultType<(i32, i32, u32, u32)> {
     let displays = crate::server::display_service::try_get_displays()?;
     let mut min_x = i32::MAX;

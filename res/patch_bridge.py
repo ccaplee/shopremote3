@@ -105,11 +105,11 @@ def patch_bridge_generated(filepath, mode):
                     depth -= 1
                 pos += 1
             if depth == 0:
-                body = content[start:pos-1]
-                # Use if cfg!() macro instead of #[cfg] attribute on expressions
-                # because stable Rust doesn't allow attributes on expressions (E0658)
-                new_body = f"""
-    if cfg!(not(feature = "{feature}")) {{{body}}}"""
+                # Replace entire function body with unreachable!()
+                # This works because unreachable!() returns ! (never type)
+                # which coerces to any return type, and the code is completely
+                # removed from compilation (unlike if cfg!() which still type-checks)
+                new_body = f'\n    unreachable!("excluded in {feature} build");\n'
                 content = content[:start] + new_body + content[pos-1:]
                 patched_count += 1
 
@@ -147,9 +147,8 @@ def patch_bridge_io(filepath, mode):
                     depth -= 1
                 pos += 1
             if depth == 0:
-                body = content[start:pos-1]
-                new_body = f"""
-    if cfg!(not(feature = "{feature}")) {{{body}}}"""
+                # Replace entire function body with unreachable!()
+                new_body = f'\n    unreachable!("excluded in {feature} build");\n'
                 content = content[:start] + new_body + content[pos-1:]
                 patched_count += 1
 
