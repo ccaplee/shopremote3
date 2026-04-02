@@ -271,12 +271,11 @@ pub fn session_get_enable_trusted_devices(session_id: SessionID) -> SyncReturn<b
     SyncReturn(v)
 }
 
-#[cfg(not(feature = "host-only"))]
 pub fn will_session_close_close_session(session_id: SessionID) -> SyncReturn<bool> {
-    SyncReturn(sessions::would_remove_peer_by_session_id(&session_id))
-}
-#[cfg(feature = "host-only")]
-pub fn will_session_close_close_session(session_id: SessionID) -> SyncReturn<bool> {
+    if cfg!(not(feature = "host-only")) {
+        #[cfg(not(feature = "host-only"))]
+        return SyncReturn(sessions::would_remove_peer_by_session_id(&session_id));
+    }
     let _ = session_id;
     SyncReturn(false)
 }
@@ -1243,27 +1242,29 @@ pub fn main_set_env(key: String, value: Option<String>) -> SyncReturn<()> {
     SyncReturn(())
 }
 
-#[cfg(not(feature = "host-only"))]
 pub fn main_set_local_option(key: String, value: String) {
-    let is_texture_render_key = key.eq(config::keys::OPTION_TEXTURE_RENDER);
-    let is_d3d_render_key = key.eq(config::keys::OPTION_ALLOW_D3D_RENDER);
-    set_local_option(key, value.clone());
-    if is_texture_render_key {
-        let session_event = [("v", &value)];
-        for session in sessions::get_sessions() {
-            session.push_event("use_texture_render", &session_event, &[]);
-            session.use_texture_render_changed();
-            session.ui_handler.update_use_texture_render();
+    if cfg!(not(feature = "host-only")) {
+        #[cfg(not(feature = "host-only"))]
+        {
+            let is_texture_render_key = key.eq(config::keys::OPTION_TEXTURE_RENDER);
+            let is_d3d_render_key = key.eq(config::keys::OPTION_ALLOW_D3D_RENDER);
+            set_local_option(key, value.clone());
+            if is_texture_render_key {
+                let session_event = [("v", &value)];
+                for session in sessions::get_sessions() {
+                    session.push_event("use_texture_render", &session_event, &[]);
+                    session.use_texture_render_changed();
+                    session.ui_handler.update_use_texture_render();
+                }
+            }
+            if is_d3d_render_key {
+                for session in sessions::get_sessions() {
+                    session.update_supported_decodings();
+                }
+            }
+            return;
         }
     }
-    if is_d3d_render_key {
-        for session in sessions::get_sessions() {
-            session.update_supported_decodings();
-        }
-    }
-}
-#[cfg(feature = "host-only")]
-pub fn main_set_local_option(key: String, value: String) {
     set_local_option(key, value);
 }
 
@@ -1307,18 +1308,18 @@ pub fn main_get_input_source() -> SyncReturn<String> {
     SyncReturn(input_source)
 }
 
-#[cfg(not(feature = "host-only"))]
 pub fn main_set_input_source(session_id: SessionID, value: String) {
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    {
-        change_input_source(session_id, value);
-        if let Some(session) = sessions::get_session_by_session_id(&session_id) {
-            try_sync_peer_option(&session, &session_id, "input_source", None);
+    if cfg!(not(feature = "host-only")) {
+        #[cfg(not(feature = "host-only"))]
+        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        {
+            change_input_source(session_id, value);
+            if let Some(session) = sessions::get_session_by_session_id(&session_id) {
+                try_sync_peer_option(&session, &session_id, "input_source", None);
+            }
+            return;
         }
     }
-}
-#[cfg(feature = "host-only")]
-pub fn main_set_input_source(session_id: SessionID, value: String) {
     let _ = (session_id, value);
 }
 
@@ -2422,14 +2423,14 @@ pub fn main_update_me() -> SyncReturn<bool> {
     SyncReturn(true)
 }
 
-#[cfg(not(feature = "host-only"))]
 pub fn set_cur_session_id(session_id: SessionID) {
-    if let Some(session) = sessions::get_session_by_session_id(&session_id) {
-        set_cur_session_id_(session_id, &session.get_keyboard_mode())
+    if cfg!(not(feature = "host-only")) {
+        #[cfg(not(feature = "host-only"))]
+        if let Some(session) = sessions::get_session_by_session_id(&session_id) {
+            set_cur_session_id_(session_id, &session.get_keyboard_mode())
+        }
+        return;
     }
-}
-#[cfg(feature = "host-only")]
-pub fn set_cur_session_id(session_id: SessionID) {
     let _ = session_id;
 }
 
