@@ -96,7 +96,7 @@ jobs:
           submodules: recursive
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
@@ -223,7 +223,7 @@ jobs:
           fi
 
       - name: Download ShopRemote3TempTopMostWindow artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         if: ${{ inputs.upload-artifact }}
         with:
           name: topmostwindow-artifacts
@@ -231,7 +231,7 @@ jobs:
 
       - name: Upload unsigned
         if: env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote2-unsigned-windows-${{ matrix.job.arch }}
           path: shopremote2
@@ -397,7 +397,7 @@ jobs:
 
       - name: Upload unsigned
         if: env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote2-unsigned-windows-${{ matrix.job.arch }}
           path: Release
@@ -514,7 +514,7 @@ jobs:
           key: ${{ matrix.job.target }}
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
@@ -525,7 +525,7 @@ jobs:
           cargo build --features flutter,hwcodec --release --target aarch64-apple-ios --lib
           
       - name: Upload liblibshopremote2.a Artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: liblibshopremote2.a
           path: target/aarch64-apple-ios/release/liblibshopremote2.a
@@ -540,7 +540,7 @@ jobs:
 
       # - name: Upload Artifacts
       #   # if: env.ANDROID_SIGNING_KEY != null && env.UPLOAD_ARTIFACT == 'true'
-      #   uses: actions/upload-artifact@master
+      #   uses: actions/upload-artifact@v4
       #   with:
       #     name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
       #     path: flutter/build/ios/ipa/*.ipa
@@ -676,7 +676,7 @@ jobs:
           prefix-key: ${{ matrix.job.os }}
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
@@ -739,7 +739,7 @@ jobs:
 
       - name: Upload unsigned macOS app
         if: env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote2-unsigned-macos-${{ matrix.job.arch }}
           path: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.dmg # can not upload the directory directly or tar.gz, which destroy the link structure, causing the codesign failed
@@ -787,25 +787,25 @@ jobs:
     if: ${{ inputs.upload-artifact }}
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: shopremote2-unsigned-macos-x86_64
           path: ./
 
       - name: Download Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: shopremote2-unsigned-macos-aarch64
           path: ./
 
       - name: Download Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: shopremote2-unsigned-windows-x86_64
           path: ./windows-x86_64/
 
       - name: Download Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: shopremote2-unsigned-windows-x86
           path: ./windows-x86/
@@ -962,7 +962,7 @@ jobs:
         shell: bash
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
@@ -1009,7 +1009,7 @@ jobs:
           esac
 
       - name: Upload ShopRemote3 library to Artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: libshopremote2.so.${{ matrix.job.target }}
           path: ./target/${{ matrix.job.target }}/release/liblibshopremote2.so
@@ -1090,7 +1090,7 @@ jobs:
 
       - name: Upload Artifacts
         if: env.ANDROID_SIGNING_KEY != null && env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
           path: ${{steps.sign-shopremote2.outputs.signedReleaseFile}}
@@ -1106,7 +1106,7 @@ jobs:
 
       - name: Upload unsigned apk artifact
         if: env.ANDROID_SIGNING_KEY == null && env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
           path: signed-apk/shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}${{ matrix.job.suffix }}.apk
@@ -1200,32 +1200,32 @@ jobs:
           [[ "3.24.5" == ${{env.ANDROID_FLUTTER_VERSION}} ]] && git apply ${{ github.workspace }}/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
 
       - name: Download ShopRemote3 library from Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: libshopremote2.so.aarch64-linux-android
           path: ./flutter/android/app/src/main/jniLibs/arm64-v8a
 
       - name: Download ShopRemote3 library from Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: libshopremote2.so.armv7-linux-androideabi
           path: ./flutter/android/app/src/main/jniLibs/armeabi-v7a
 
       - name: Download ShopRemote3 library from Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: libshopremote2.so.x86_64-linux-android
           path: ./flutter/android/app/src/main/jniLibs/x86_64
 
       - name: Download ShopRemote3 library from Artifacts
         if: ${{ env.reltype == 'debug' }}
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: libshopremote2.so.i686-linux-android
           path: ./flutter/android/app/src/main/jniLibs/x86
@@ -1281,7 +1281,7 @@ jobs:
 
       - name: Upload Artifacts
         if: env.ANDROID_SIGNING_KEY != null && env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
           path: ${{steps.sign-shopremote2.outputs.signedReleaseFile}}
@@ -1384,7 +1384,7 @@ jobs:
 
       - name: Restore bridge files
         if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
@@ -1419,7 +1419,7 @@ jobs:
 
       - name: Restore bridge files
         if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: bridge-artifact
           path: ./
@@ -1607,14 +1607,14 @@ jobs:
             shopremote2-*.rpm
 
       - name: Upload deb
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         if: env.UPLOAD_ARTIFACT == 'true'
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.deb
           path: shopremote2-*.deb
 
       - name: Upload rpm
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         if: env.UPLOAD_ARTIFACT == 'true'
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.rpm
@@ -1869,7 +1869,7 @@ jobs:
             shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}-sciter.deb
 
       - name: Upload deb
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         if: env.UPLOAD_ARTIFACT == 'true'
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}-sciter.deb
@@ -1893,7 +1893,7 @@ jobs:
           submodules: recursive
 
       - name: Download Binary
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}.deb
           path: .
@@ -1966,7 +1966,7 @@ jobs:
           submodules: recursive
 
       - name: Download Binary
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: shopremote2-${{ env.VERSION }}-${{ matrix.job.arch }}${{ matrix.job.suffix }}.deb
           path: .

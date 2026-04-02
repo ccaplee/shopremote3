@@ -45,9 +45,9 @@ jobs:
           submodules: recursive
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
-          name: bridge-artifacts
+          name: bridge-artifact
           path: ./
 
       - name: Install Rust toolchain
@@ -72,7 +72,7 @@ jobs:
           python3 build.py --flutter --host-only
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote3-host-windows
           path: shopremote3-host-*.exe
@@ -101,9 +101,9 @@ jobs:
           submodules: recursive
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
-          name: bridge-artifacts
+          name: bridge-artifact
           path: ./
 
       - name: Install Rust toolchain
@@ -129,7 +129,7 @@ jobs:
           python3 build.py --flutter --host-only
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote3-host-macos-${{ matrix.job.arch }}
           path: shopremote3-host-*.dmg
@@ -154,9 +154,9 @@ jobs:
           submodules: recursive
 
       - name: Restore bridge files
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
-          name: bridge-artifacts
+          name: bridge-artifact
           path: ./
 
       - name: Install Rust toolchain
@@ -186,7 +186,7 @@ jobs:
           python3 build.py --flutter --host-only
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shopremote3-host-linux-x86_64
           path: shopremote3-host-*.deb
@@ -197,7 +197,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
