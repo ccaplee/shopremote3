@@ -106,12 +106,17 @@ fn load_plugin_in_app_path(dll_name: &str) -> Result<Library, LibError> {
 #[cfg(not(windows))]
 #[no_mangle]
 pub extern "C" fn shopremote2_core_main() -> bool {
+    eprintln!("[ShopRemote3] shopremote2_core_main() called");
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    if crate::core_main::core_main().is_some() {
-        return true;
-    } else {
-        #[cfg(target_os = "macos")]
-        std::process::exit(0);
+    {
+        let result = crate::core_main::core_main();
+        eprintln!("[ShopRemote3] core_main() returned: {}", result.is_some());
+        if result.is_some() {
+            return true;
+        } else {
+            #[cfg(target_os = "macos")]
+            std::process::exit(0);
+        }
     }
     #[cfg(not(target_os = "macos"))]
     false

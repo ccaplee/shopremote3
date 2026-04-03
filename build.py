@@ -339,6 +339,17 @@ def swap_icons(host_only=False, remote_only=False):
             shutil.copy2(src, dst)
     print(f"  Res PNGs: swapped to {variant}")
 
+    # Update macOS PRODUCT_NAME for variant
+    app_name = 'ShopRemote_host' if host_only else ('ShopRemote_remote' if remote_only else 'ShopRemote3')
+    xcconfig = os.path.join(base, 'flutter', 'macos', 'Runner', 'Configs', 'AppInfo.xcconfig')
+    if os.path.exists(xcconfig):
+        with open(xcconfig, 'r') as f:
+            content = f.read()
+        content = content.replace('PRODUCT_NAME = ShopRemote3', f'PRODUCT_NAME = {app_name}')
+        with open(xcconfig, 'w') as f:
+            f.write(content)
+        print(f"  macOS PRODUCT_NAME: {app_name}")
+
 
 def get_features(args):
     features = ['inline'] if not args.flutter else []
@@ -507,11 +518,14 @@ def build_flutter_dmg(version, features, host_only=False, remote_only=False):
     dart_entrypoint = 'lib/main_host.dart' if host_only else ('lib/main_remote.dart' if remote_only else '')
     entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build macos --release {entrypoint_arg}')
-    system2('cp -rf ../target/release/service ./build/macos/Build/Products/Release/ShopRemote3.app/Contents/MacOS/')
+    # Determine app name based on variant
+    app_name = 'ShopRemote_host' if host_only else ('ShopRemote_remote' if remote_only else 'ShopRemote3')
+    app_bundle = f'./build/macos/Build/Products/Release/{app_name}.app'
+    system2(f'cp -rf ../target/release/service {app_bundle}/Contents/MacOS/')
     # Create DMG using hdiutil (built-in macOS tool)
     variant = 'host' if host_only else ('remote' if remote_only else 'full')
     dmg_name = f"shopremote3-{variant}-{version}.dmg"
-    system2(f'hdiutil create -volname "ShopRemote3" -srcfolder ./build/macos/Build/Products/Release/ShopRemote3.app -ov -format UDZO ../{dmg_name}')
+    system2(f'hdiutil create -volname "{app_name}" -srcfolder {app_bundle} -ov -format UDZO ../{dmg_name}')
     os.chdir("..")
 
 

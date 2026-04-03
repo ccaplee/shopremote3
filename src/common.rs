@@ -146,6 +146,15 @@ impl Drop for SimpleCallOnReturn {
 /// # 반환
 /// 항상 true를 반환한다.
 pub fn global_init() -> bool {
+    // Set app name based on build variant
+    #[cfg(feature = "host-only")]
+    {
+        *hbb_common::config::APP_NAME.write().unwrap() = "ShopRemote_host".to_owned();
+    }
+    #[cfg(feature = "remote-only")]
+    {
+        *hbb_common::config::APP_NAME.write().unwrap() = "ShopRemote_remote".to_owned();
+    }
     #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     {
         // Linux: X11이 아닌 경우 Wayland 초기화 (서버 측 기능 - remote-only 제외)

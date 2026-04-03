@@ -33,13 +33,17 @@ macro_rules! my_println{
 /// If it returns [`Some`], then the process will continue, and flutter gui will be started.
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub fn core_main() -> Option<Vec<String>> {
+    eprintln!("[ShopRemote3] core_main() started");
     if !crate::common::global_init() {
+        eprintln!("[ShopRemote3] global_init() returned false, exiting");
         return None;
     }
+    eprintln!("[ShopRemote3] global_init() OK");
     #[cfg(not(feature = "host-only"))]
     crate::load_custom_client();
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
+        eprintln!("[ShopRemote3] bootstrap() returned false, exiting");
         // return None to terminate the process
         return None;
     }
@@ -194,7 +198,9 @@ pub fn core_main() -> Option<Vec<String>> {
     #[cfg(all(feature = "flutter", feature = "plugin_framework"))]
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     init_plugins(&args);
+    eprintln!("[ShopRemote3] args parsed: {:?}, flutter_args: {:?}", args, flutter_args);
     if args.is_empty() || crate::common::is_empty_uni_link(&args[0]) {
+        eprintln!("[ShopRemote3] normal launch path (args empty)");
         #[cfg(target_os = "macos")]
         {
             crate::platform::macos::try_remove_temp_update_dir(None);
@@ -206,7 +212,10 @@ pub fn core_main() -> Option<Vec<String>> {
             hbb_common::config::PeerConfig::preload_peers();
         }
         #[cfg(not(feature = "remote-only"))]
-        std::thread::spawn(move || crate::start_server(false, no_server));
+        {
+            eprintln!("[ShopRemote3] starting server thread...");
+            std::thread::spawn(move || crate::start_server(false, no_server));
+        }
     } else {
         #[cfg(windows)]
         {
@@ -695,6 +704,7 @@ pub fn core_main() -> Option<Vec<String>> {
         }
     }
     //_async_logger_holder.map(|x| x.flush());
+    eprintln!("[ShopRemote3] core_main() returning Some(flutter_args)");
     #[cfg(feature = "flutter")]
     return Some(flutter_args);
     #[cfg(not(feature = "flutter"))]
