@@ -483,10 +483,15 @@ class ServerModel with ChangeNotifier {
   }
 
   fetchID() async {
-    final id = await bind.mainGetMyId();
-    if (id != _serverId.id) {
-      _serverId.id = id;
-      notifyListeners();
+    try {
+      final id = await bind.mainGetMyId();
+      debugPrint('[ShopRemote3] fetchID: mainGetMyId returned: "$id"');
+      if (id != _serverId.id) {
+        _serverId.id = id;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('[ShopRemote3] fetchID error: $e');
     }
   }
 

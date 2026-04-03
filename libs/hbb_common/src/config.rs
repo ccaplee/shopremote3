@@ -914,15 +914,25 @@ impl Config {
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
             let mut id = 0u32;
-            if let Ok(Some(ma)) = mac_address::get_mac_address() {
-                for x in &ma.bytes()[2..] {
-                    id = (id << 8) | (*x as u32);
+            match mac_address::get_mac_address() {
+                Ok(Some(ma)) => {
+                    eprintln!("[ShopRemote3] get_auto_id: MAC address: {:?}", ma);
+                    for x in &ma.bytes()[2..] {
+                        id = (id << 8) | (*x as u32);
+                    }
+                    id &= 0x1FFFFFFF;
+                    eprintln!("[ShopRemote3] get_auto_id: Generated id {}", id);
+                    log::info!("Generated id {}", id);
+                    Some(id.to_string())
                 }
-                id &= 0x1FFFFFFF;
-                log::info!("Generated id {}", id);
-                Some(id.to_string())
-            } else {
-                None
+                Ok(None) => {
+                    eprintln!("[ShopRemote3] get_auto_id: MAC address returned None!");
+                    None
+                }
+                Err(e) => {
+                    eprintln!("[ShopRemote3] get_auto_id: MAC address error: {:?}", e);
+                    None
+                }
             }
         }
     }
@@ -1057,10 +1067,15 @@ impl Config {
 
     pub fn get_id() -> String {
         let mut id = CONFIG.read().unwrap().id.clone();
+        eprintln!("[ShopRemote3] Config::get_id() stored id: '{}'", id);
         if id.is_empty() {
+            eprintln!("[ShopRemote3] Config::get_id() id empty, calling gen_id()...");
             if let Some(tmp) = Config::gen_id() {
+                eprintln!("[ShopRemote3] Config::get_id() gen_id returned: '{}'", tmp);
                 id = tmp;
                 Config::set_id(&id);
+            } else {
+                eprintln!("[ShopRemote3] Config::get_id() gen_id returned None!");
             }
         }
         id

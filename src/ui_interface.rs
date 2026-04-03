@@ -93,7 +93,17 @@ pub fn get_id() -> String {
     #[cfg(any(target_os = "android", target_os = "ios"))]
     return Config::get_id();
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    return ipc::get_id();
+    {
+        let id = ipc::get_id();
+        if id.is_empty() {
+            eprintln!("[ShopRemote3] get_id: ipc returned empty, trying Config::get_id() directly");
+            let config_id = Config::get_id();
+            eprintln!("[ShopRemote3] get_id: Config::get_id() returned: '{}'", config_id);
+            return config_id;
+        }
+        eprintln!("[ShopRemote3] get_id: ipc returned: '{}'", id);
+        return id;
+    }
 }
 
 #[inline]
