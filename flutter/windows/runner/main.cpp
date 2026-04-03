@@ -25,21 +25,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   HINSTANCE hInstance = LoadLibraryA("libshopremote3.dll");
   if (!hInstance)
   {
-    std::cout << "Failed to load libshopremote3.dll." << std::endl;
+    DWORD err = GetLastError();
+    wchar_t msg[512];
+    swprintf(msg, 512, L"Failed to load libshopremote3.dll.\nError code: %lu", err);
+    MessageBoxW(NULL, msg, L"ShopRemote3 Error", MB_OK | MB_ICONERROR);
     return EXIT_FAILURE;
   }
   FUNC_RUSTDESK_CORE_MAIN shopremote2_core_main =
       (FUNC_RUSTDESK_CORE_MAIN)GetProcAddress(hInstance, "shopremote2_core_main_args");
   if (!shopremote2_core_main)
   {
-    std::cout << "Failed to get shopremote2_core_main." << std::endl;
+    MessageBoxW(NULL, L"Failed to get shopremote2_core_main_args from DLL.", L"ShopRemote3 Error", MB_OK | MB_ICONERROR);
     return EXIT_FAILURE;
   }
   FUNC_RUSTDESK_FREE_ARGS free_c_args =
       (FUNC_RUSTDESK_FREE_ARGS)GetProcAddress(hInstance, "free_c_args");
   if (!free_c_args)
   {
-    std::cout << "Failed to get free_c_args." << std::endl;
+    MessageBoxW(NULL, L"Failed to get free_c_args from DLL.", L"ShopRemote3 Error", MB_OK | MB_ICONERROR);
     return EXIT_FAILURE;
   }
   std::vector<std::string> command_line_arguments =
@@ -53,11 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   char** c_args = shopremote2_core_main(&args_len);
   if (!c_args)
   {
-    std::string args_str = "";
-    for (const auto& argument : command_line_arguments) {
-      args_str += (argument + " ");
-    }
-    // std::cout << "ShopRemote2 [" << args_str << "], core returns false, exiting without launching Flutter app." << std::endl;
+    MessageBoxW(NULL, L"core_main returned NULL. The app will exit.\nThis may happen if the service is already running or initialization failed.", L"ShopRemote3 Debug", MB_OK | MB_ICONWARNING);
     return EXIT_SUCCESS;
   }
   std::vector<std::string> rust_args(c_args, c_args + args_len);

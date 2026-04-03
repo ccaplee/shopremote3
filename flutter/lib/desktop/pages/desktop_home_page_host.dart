@@ -24,6 +24,7 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   final _leftPaneScrollController = ScrollController();
   Timer? _updateTimer;
+  final RxBool svcStopped = false.obs;
 
   @override
   bool get wantKeepAlive => true;
@@ -32,6 +33,15 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _updateTimer = periodic_immediate(const Duration(seconds: 1), () async {
+      await gFFI.serverModel.fetchID();
+      final v = await mainGetBoolOption(kOptionStopService);
+      if (v != svcStopped.value) {
+        svcStopped.value = v;
+        setState(() {});
+      }
+    });
+    Get.put<RxBool>(svcStopped, tag: 'stop-service');
   }
 
   @override
