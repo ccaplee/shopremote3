@@ -325,7 +325,7 @@ def swap_icons(host_only=False, remote_only=False):
         if not os.path.isdir(density_dir):
             continue
         for icon_name in ['ic_launcher', 'ic_launcher_round', 'ic_launcher_foreground']:
-            src = os.path.join(density_dir, f'{icon_name}-{variant}.png')
+            src = os.path.join(density_dir, f'{icon_name}_{variant}.png')
             dst = os.path.join(density_dir, f'{icon_name}.png')
             if os.path.exists(src):
                 shutil.copy2(src, dst)
