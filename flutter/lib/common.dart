@@ -257,17 +257,17 @@ class MyTheme {
   MyTheme._();
 
   static const Color grayBg = Color(0xFFEFEFF2);
-  // Note: accent is now dynamic based on app mode, use getPrimaryColor() instead
-  static const Color accent = Color(0xFF00B894);
-  static const Color accent50 = Color(0x7700B894);
-  static const Color accent80 = Color(0xAA00B894);
+  // Dynamic accent colors based on app mode (Host=red, Remote=blue, Default=green)
+  static Color get accent => getPrimaryColor();
+  static Color get accent50 => getPrimaryColor().withOpacity(0.47);
+  static Color get accent80 => getPrimaryColor().withOpacity(0.67);
   static const Color canvasColor = Color(0xFF1A1A2E);
   static const Color border = Color(0xFFCCCCCC);
-  static const Color idColor = Color(0xFF00CEC9);
+  static Color get idColor => isHostOnly ? const Color(0xFFE74C3C) : isRemoteOnly ? const Color(0xFF3498DB) : const Color(0xFF00CEC9);
   static const Color darkGray = Color.fromARGB(255, 148, 148, 148);
-  static const Color cmIdColor = Color(0xFF00B894);
+  static Color get cmIdColor => getPrimaryColor();
   static const Color dark = Colors.black87;
-  static const Color button = Color(0xFF00B894);
+  static Color get button => getPrimaryColor();
   static const Color hoverBorder = Color(0xFF999999);
 
   // ListTile
@@ -393,7 +393,7 @@ class MyTheme {
     }),
   );
 
-  static ThemeData lightTheme = ThemeData(
+  static ThemeData get lightTheme => ThemeData(
     // https://stackoverflow.com/questions/77537315/after-upgrading-to-flutter-3-16-the-app-bar-background-color-button-size-and
     useMaterial3: false,
     brightness: Brightness.light,
@@ -492,7 +492,7 @@ class MyTheme {
       TabbarTheme.light,
     ],
   );
-  static ThemeData darkTheme = ThemeData(
+  static ThemeData get darkTheme => ThemeData(
     useMaterial3: false,
     brightness: Brightness.dark,
     hoverColor: Color.fromARGB(255, 45, 46, 53),
@@ -522,7 +522,7 @@ class MyTheme {
             ),
           )
         : null,
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       titleLarge: TextStyle(fontSize: 19),
       titleSmall: TextStyle(fontSize: 14),
       bodySmall: TextStyle(fontSize: 12, height: 1.25),
