@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(shopremote2 LANGUAGES CXX)
+project(shopremote3 LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "shopremote2")
+set(BINARY_NAME "shopremote3")
 
 # Explicitly opt into modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -102,7 +102,7 @@ endif()
 
 # flutter_rust_bridge
 set(RUSTDESK_LIB_BUILD_TYPE $<IF:$<CONFIG:Debug>,debug,release>)
-message(STATUS "shopremote2 lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
+message(STATUS "shopremote3 lib build type: ${RUSTDESK_LIB_BUILD_TYPE}")
 set(RUSTDESK_LIB "../../target/${RUSTDESK_LIB_BUILD_TYPE}/libshopremote3.dll")
 install(FILES "${RUSTDESK_LIB}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
 COMPONENT Runtime RENAME libshopremote3.dll)

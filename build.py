@@ -468,7 +468,8 @@ def build_flutter_windows(version, features, skip_portable_pack, host_only=False
         return
     os.chdir('libs/portable')
     system2('pip3 install -r requirements.txt')
-    binary_name = 'shopremote3-host.exe' if host_only else ('shopremote3-remote.exe' if remote_only else 'shopremote3.exe')
+    # Flutter build output is always named 'shopremote3.exe' (set by BINARY_NAME in CMakeLists.txt)
+    binary_name = 'shopremote3.exe'
     system2(
         f'python3 ./generate.py -f ../../{flutter_build_dir_2} -o . -e ../../{flutter_build_dir_2}/{binary_name}')
     os.chdir('../..')
