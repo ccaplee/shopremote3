@@ -573,7 +573,7 @@ def build_flutter_windows(version, features, skip_portable_pack, host_only=False
     else:
         os.rename('./target/release/shopremote3-portable-packer.exe',
                   './shopremote3_portable.exe')
-    output_name = f'shopremote3-host-{version}-install.exe' if host_only else (f'shopremote3-remote-{version}-install.exe' if remote_only else f'shopremote3-{version}-install.exe')
+    output_name = f'shopremote3-host-{version}.exe' if host_only else (f'shopremote3-remote-{version}.exe' if remote_only else f'shopremote3-{version}.exe')
     print(
         f'output location: {os.path.abspath(os.curdir)}/shopremote3_portable.exe')
     os.rename('./shopremote3_portable.exe', f'./{output_name}')
