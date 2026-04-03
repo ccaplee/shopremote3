@@ -132,7 +132,12 @@ class PlatformFFI {
                 DynamicLibrary.process();
     debugPrint('initializing FFI $_appType');
     try {
-      _session_get_rgba = dylib.lookupFunction<F3Dart, F3>("session_get_rgba");
+      try {
+        _session_get_rgba = dylib.lookupFunction<F3Dart, F3>("session_get_rgba");
+      } catch (e) {
+        debugPrint('session_get_rgba not available (expected in host-only build): $e');
+        _session_get_rgba = null;
+      }
       try {
         // SYSTEM user failed
         _dir = (await getApplicationDocumentsDirectory()).path;
