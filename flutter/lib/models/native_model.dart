@@ -118,17 +118,17 @@ class PlatformFFI {
   Future<void> init(String appType) async {
     _appType = appType;
     final dylib = isAndroid
-        ? DynamicLibrary.open('libshopremote2.so')
+        ? DynamicLibrary.open('libshopremote3.so')
         : isLinux
-            ? DynamicLibrary.open('libshopremote2.so')
+            ? DynamicLibrary.open('libshopremote3.so')
             : isWindows
-                ? DynamicLibrary.open('libshopremote2.dll')
+                ? DynamicLibrary.open('libshopremote3.dll')
                 :
                 // Use executable itself as the dynamic library for MacOS.
                 // Multiple dylib instances will cause some global instances to be invalid.
                 // eg. `lazy_static` objects in rust side, will be created more than once, which is not expected.
                 //
-                // isMacOS? DynamicLibrary.open("liblibshopremote2.dylib") :
+                // isMacOS? DynamicLibrary.open("liblibshopremote3.dylib") :
                 DynamicLibrary.process();
     debugPrint('initializing FFI $_appType');
     try {

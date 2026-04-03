@@ -10,7 +10,7 @@ void print_help_install_pkg(const char* so);
 bool flutter_shopremote2_core_main() {
    void* libshopremote2 = dlopen(RUSTDESK_LIB_PATH, RTLD_LAZY);
    if (!libshopremote2) {
-      fprintf(stderr,"Failed to load \"libshopremote2.so\"\n");
+      fprintf(stderr,"Failed to load \"libshopremote3.so\"\n");
       char* error;
       if ((error = dlerror()) != nullptr) {
         fprintf(stderr, "%s\n", error);

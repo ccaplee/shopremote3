@@ -281,6 +281,65 @@ def external_resources(flutter, args, res_dir):
                 shutil.copytree(f, f'{flutter_build_dir_2}{f.stem}')
 
 
+def swap_icons(host_only=False, remote_only=False):
+    """Swap app icons based on build variant (host=red, remote=blue)."""
+    if not host_only and not remote_only:
+        return
+    variant = 'host' if host_only else 'remote'
+    print(f"Swapping icons for {variant} variant...")
+
+    base = os.path.dirname(os.path.abspath(__file__))
+
+    # Windows .ico
+    ico_src = os.path.join(base, 'res', f'icon-{variant}.ico')
+    ico_dst = os.path.join(base, 'flutter', 'windows', 'runner', 'resources', 'app_icon.ico')
+    if os.path.exists(ico_src):
+        shutil.copy2(ico_src, ico_dst)
+        print(f"  Windows ICO: {ico_src} -> {ico_dst}")
+
+    # Main icon.png (used by Linux, etc.)
+    png_src = os.path.join(base, 'res', f'icon-{variant}.png')
+    png_dst = os.path.join(base, 'res', 'icon.png')
+    if os.path.exists(png_src):
+        shutil.copy2(png_src, png_dst)
+        print(f"  Main icon.png: swapped to {variant}")
+
+    # Tray icon
+    tray_src = os.path.join(base, 'res', f'tray-icon-{variant}.ico')
+    tray_dst = os.path.join(base, 'res', 'tray-icon.ico')
+    if os.path.exists(tray_src):
+        shutil.copy2(tray_src, tray_dst)
+        print(f"  Tray ICO: swapped to {variant}")
+
+    # macOS icon (mac-icon.png is used for icns generation)
+    mac_src = os.path.join(base, 'res', f'mac-icon-{variant}.png')
+    mac_dst = os.path.join(base, 'res', 'mac-icon.png')
+    if os.path.exists(mac_src):
+        shutil.copy2(mac_src, mac_dst)
+        print(f"  macOS icon: swapped to {variant}")
+
+    # Android mipmap icons
+    android_res = os.path.join(base, 'flutter', 'android', 'app', 'src', 'main', 'res')
+    for density in ['mipmap-mdpi', 'mipmap-hdpi', 'mipmap-xhdpi', 'mipmap-xxhdpi', 'mipmap-xxxhdpi']:
+        density_dir = os.path.join(android_res, density)
+        if not os.path.isdir(density_dir):
+            continue
+        for icon_name in ['ic_launcher', 'ic_launcher_round', 'ic_launcher_foreground']:
+            src = os.path.join(density_dir, f'{icon_name}-{variant}.png')
+            dst = os.path.join(density_dir, f'{icon_name}.png')
+            if os.path.exists(src):
+                shutil.copy2(src, dst)
+    print(f"  Android mipmaps: swapped to {variant}")
+
+    # res/ size variants
+    for size_name in ['32x32', '64x64', '128x128', '128x128@2x']:
+        src = os.path.join(base, 'res', f'{size_name}-{variant}.png')
+        dst = os.path.join(base, 'res', f'{size_name}.png')
+        if os.path.exists(src):
+            shutil.copy2(src, dst)
+    print(f"  Res PNGs: swapped to {variant}")
+
+
 def get_features(args):
     features = ['inline'] if not args.flutter else []
     if args.hwcodec:
@@ -426,6 +485,24 @@ def build_flutter_dmg(version, features, host_only=False, remote_only=False):
     # copy dylib
     system2(
         "cp target/release/liblibshopremote3.dylib target/release/libshopremote3.dylib")
+    # Generate macOS .icns from mac-icon.png if available (icon was already swapped by swap_icons())
+    mac_icon_png = 'res/mac-icon.png'
+    if os.path.exists(mac_icon_png):
+        iconset_dir = '/tmp/AppIcon.iconset'
+        system2(f'rm -rf {iconset_dir} && mkdir -p {iconset_dir}')
+        icon_sizes = [
+            (16, '16x16', '1x'), (32, '16x16', '2x'), (32, '32x32', '1x'),
+            (64, '32x32', '2x'), (128, '128x128', '1x'), (256, '128x128', '2x'),
+            (256, '256x256', '1x'), (512, '256x256', '2x'), (512, '512x512', '1x'),
+            (1024, '512x512', '2x'),
+        ]
+        for px, name, scale in icon_sizes:
+            suffix = f'@{scale}' if scale != '1x' else ''
+            out_name = f'icon_{name}{suffix}.png'
+            system2(f'sips -z {px} {px} {mac_icon_png} --out {iconset_dir}/{out_name}')
+        icns_out = 'flutter/macos/Runner/AppIcon.icns'
+        system2(f'iconutil -c icns {iconset_dir} -o {icns_out}')
+        print(f"Generated macOS icns: {icns_out}")
     os.chdir('flutter')
     dart_entrypoint = 'lib/main_host.dart' if host_only else ('lib/main_remote.dart' if remote_only else '')
     entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
@@ -513,6 +590,8 @@ def main():
         return
     res_dir = 'resources'
     external_resources(flutter, args, res_dir)
+    # Swap icons for host/remote variant builds
+    swap_icons(host_only, remote_only)
     if windows:
         # build virtual display dynamic library
         os.chdir('libs/virtual_display/dylib')
