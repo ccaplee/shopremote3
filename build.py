@@ -522,6 +522,9 @@ def build_flutter_dmg(version, features, host_only=False, remote_only=False):
     app_name = 'ShopRemote_host' if host_only else ('ShopRemote_remote' if remote_only else 'ShopRemote3')
     app_bundle = f'./build/macos/Build/Products/Release/{app_name}.app'
     system2(f'cp -rf ../target/release/service {app_bundle}/Contents/MacOS/')
+    # Ad-hoc codesign the entire app bundle (fixes Team ID mismatch between
+    # Flutter framework and main binary that prevents dyld from loading)
+    system2(f'codesign --deep --force --sign - {app_bundle}')
     # Create DMG using hdiutil (built-in macOS tool)
     variant = 'host' if host_only else ('remote' if remote_only else 'full')
     dmg_name = f"shopremote3-{variant}-{version}.dmg"
