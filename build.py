@@ -431,11 +431,10 @@ def build_flutter_dmg(version, features, host_only=False, remote_only=False):
     entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build macos --release {entrypoint_arg}')
     system2('cp -rf ../target/release/service ./build/macos/Build/Products/Release/ShopRemote3.app/Contents/MacOS/')
-    '''
-    system2(
-        "create-dmg --volname \"ShopRemote3 Installer\" --window-pos 200 120 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 --icon ShopRemote3.app 200 190 --hide-extension ShopRemote3.app shopremote3.dmg ./build/macos/Build/Products/Release/ShopRemote3.app")
-    os.rename("shopremote3.dmg", f"../shopremote3-{version}.dmg")
-    '''
+    # Create DMG using hdiutil (built-in macOS tool)
+    variant = 'host' if host_only else ('remote' if remote_only else 'full')
+    dmg_name = f"shopremote3-{variant}-{version}.dmg"
+    system2(f'hdiutil create -volname "ShopRemote3" -srcfolder ./build/macos/Build/Products/Release/ShopRemote3.app -ov -format UDZO ../{dmg_name}')
     os.chdir("..")
 
 
