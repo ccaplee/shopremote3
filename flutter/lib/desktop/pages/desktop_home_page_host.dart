@@ -134,56 +134,64 @@ class _DesktopHomePageHostState extends State<DesktopHomePageHost>
   }
 
   Widget buildIDSection(BuildContext context) {
-    final model = gFFI.serverModel;
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
-    return Container(
-      margin: const EdgeInsets.only(left: 20, right: 16, top: 16, bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: MyTheme.getPrimaryColor().withOpacity(0.3)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            translate("Device ID"),
-            style: TextStyle(
-              fontSize: 12,
-              color: textColor?.withOpacity(0.6),
-              fontWeight: FontWeight.w500,
-            ),
+    return Consumer<ServerModel>(
+      builder: (context, model, child) {
+        return Container(
+          margin: const EdgeInsets.only(left: 20, right: 16, top: 16, bottom: 16),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: MyTheme.getPrimaryColor().withOpacity(0.3)),
+            borderRadius: BorderRadius.circular(8),
           ),
-          SizedBox(height: 8),
-          GestureDetector(
-            onDoubleTap: () {
-              Clipboard.setData(ClipboardData(text: model.serverId.text));
-              showToast(translate("Copied"));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: SelectableText(
-                model.serverId.text,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                translate("Device ID"),
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: MyTheme.getPrimaryColor(),
-                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: textColor?.withOpacity(0.6),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
+              SizedBox(height: 8),
+              GestureDetector(
+                onDoubleTap: () {
+                  Clipboard.setData(ClipboardData(text: model.serverId.text));
+                  showToast(translate("Copied"));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: TextFormField(
+                    controller: model.serverId,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(top: 10, bottom: 10),
+                    ),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: MyTheme.getPrimaryColor(),
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                translate("Double-click to copy"),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: textColor?.withOpacity(0.5),
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 8),
-          Text(
-            translate("Double-click to copy"),
-            style: TextStyle(
-              fontSize: 10,
-              color: textColor?.withOpacity(0.5),
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
