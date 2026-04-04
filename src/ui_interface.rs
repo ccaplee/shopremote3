@@ -94,15 +94,30 @@ pub fn get_id() -> String {
     return Config::get_id();
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     {
-        let id = ipc::get_id();
-        if id.is_empty() {
-            log::info!("[ShopRemote3] get_id: ipc returned empty, trying Config::get_id() directly");
-            let config_id = Config::get_id();
+        // Try Config::get_id() first (sync, no tokio runtime needed)
+        // This avoids potential nested tokio runtime panics on Windows
+        // when called from flutter_rust_bridge's thread pool.
+        let config_id = Config::get_id();
+        if !config_id.is_empty() {
             log::info!("[ShopRemote3] get_id: Config::get_id() returned: '{}'", config_id);
             return config_id;
         }
-        log::info!("[ShopRemote3] get_id: ipc returned: '{}'", id);
-        return id;
+        // Fallback to IPC if config has no ID yet
+        log::info!("[ShopRemote3] get_id: Config empty, trying ipc...");
+        match std::panic::catch_unwind(|| ipc::get_id()) {
+            Ok(id) if !id.is_empty() => {
+                log::info!("[ShopRemote3] get_id: ipc returned: '{}'", id);
+                id
+            }
+            Ok(_) => {
+                log::info!("[ShopRemote3] get_id: ipc returned empty");
+                String::new()
+            }
+            Err(e) => {
+                log::error!("[ShopRemote3] get_id: ipc panicked: {:?}", e);
+                String::new()
+            }
+        }
     }
 }
 
