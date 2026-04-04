@@ -16,9 +16,6 @@ env:
   RUST_VERSION: "1.75"
   MAC_RUST_VERSION: "1.81"
   FLUTTER_VERSION: "3.24.5"
-  ANDROID_FLUTTER_VERSION: "3.24.5"
-  NDK_VERSION: "r27c"
-  CARGO_NDK_VERSION: "3.1.2"
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VCPKG_COMMIT_ID: "120deac3062162151622ca4860575a33844ba10b"
   VERSION: "3.0.1"
@@ -29,8 +26,8 @@ jobs:
   generate-bridge:
     uses: ./.github/workflows/bridge.yml
 
-  build-remote-windows:
-    name: Build remote-only for Windows
+  build-control-windows:
+    name: Build control for Windows
     needs: generate-bridge
     runs-on: windows-2022
     strategy:
@@ -92,7 +89,7 @@ jobs:
           fi
         shell: bash
 
-      - name: Build remote-only variant
+      - name: Build control variant
         run: |
           python3 build.py --flutter --remote-only
 
@@ -102,8 +99,8 @@ jobs:
           name: shopremote3-control-windows
           path: shopremote3-control-*.exe
 
-  build-remote-macos:
-    name: Build remote-only for macOS
+  build-control-macos:
+    name: Build control for macOS
     needs: generate-bridge
     runs-on: ${{ matrix.job.os }}
     strategy:
@@ -174,7 +171,7 @@ jobs:
           fi
         shell: bash
 
-      - name: Build remote-only variant
+      - name: Build control variant
         run: |
           python3 build.py --flutter --remote-only
 
@@ -184,242 +181,9 @@ jobs:
           name: shopremote3-control-macos-${{ matrix.job.arch }}
           path: shopremote3-control-*.dmg
 
-  build-remote-linux:
-    name: Build remote-only for Linux
-    needs: generate-bridge
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Export GitHub Actions cache environment variables
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
-      - name: Checkout source code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Restore bridge files
-        uses: actions/download-artifact@v4
-        with:
-          name: bridge-artifact
-          path: ./
-
-      - name: Patch bridge for remote-only
-        run: python3 res/patch_bridge.py --remote-only
-        shell: bash
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
-
-      - name: Install Linux dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev libxcb-randr0-dev libxdo-dev libxfixes-dev \
-            libxcb-shape0-dev libxcb-xfixes0-dev libasound2-dev \
-            libpulse-dev \
-            libsystemd-dev libva-dev libva-drm2 libva-x11-2 \
-            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-            libgstreamer-plugins-base1.0-0 libpam0g libpam0g-dev \
-            libgstreamer1.0-0 nasm
-
-      - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
-          vcpkgJsonGlob: 'vcpkg.json'
-
-      - name: Install vcpkg dependencies
-        run: |
-          if ! $VCPKG_ROOT/vcpkg \
-            install \
-            --triplet x64-linux \
-            --x-install-root="$VCPKG_ROOT/installed"; then
-            find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
-              echo "$_1:"
-              cat "$_1"
-            done
-            exit 1
-          fi
-        shell: bash
-
-      - name: Build remote-only variant
-        run: |
-          python3 build.py --flutter --remote-only
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: shopremote3-control-linux-x86_64
-          path: shopremote3-control-*.deb
-
-  build-remote-android:
-    name: Build remote-only for Android
-    needs: generate-bridge
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        job:
-          - { arch: aarch64, target: aarch64-linux-android, android_target: arm64-v8a, flutter_platform: android-arm64 }
-          - { arch: armv7, target: armv7-linux-androideabi, android_target: armeabi-v7a, flutter_platform: android-arm }
-    steps:
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: false
-          dotnet: true
-          haskell: true
-          large-packages: false
-          docker-images: true
-          swap-storage: false
-
-      - name: Export GitHub Actions cache environment variables
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-               clang cmake curl gcc-multilib git g++ g++-multilib \
-               libayatana-appindicator3-dev libasound2-dev libc6-dev \
-               libclang-dev libunwind-dev libgstreamer1.0-dev \
-               libgstreamer-plugins-base1.0-dev libgtk-3-dev libpam0g-dev \
-               libpulse-dev libva-dev libxcb-randr0-dev libxcb-shape0-dev \
-               libxcb-xfixes0-dev libxdo-dev libxfixes-dev llvm-dev \
-               nasm ninja-build openjdk-17-jdk-headless pkg-config tree wget
-
-      - name: Checkout source code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Restore bridge files
-        uses: actions/download-artifact@v4
-        with:
-          name: bridge-artifact
-          path: ./
-
-      - name: Patch bridge for remote-only
-        run: python3 res/patch_bridge.py --remote-only
-        shell: bash
-
-      - name: Install flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-          flutter-version: ${{ env.ANDROID_FLUTTER_VERSION }}
-
-      - name: Patch flutter
-        run: |
-          cd $(dirname $(dirname $(which flutter)))
-          [[ "3.24.5" == ${{ env.ANDROID_FLUTTER_VERSION }} ]] && git apply ${{ github.workspace }}/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff
-
-      - uses: nttld/setup-ndk@v1
-        id: setup-ndk
-        with:
-          ndk-version: ${{ env.NDK_VERSION }}
-          add-to-path: true
-
-      - name: Setup vcpkg with Github Actions binary cache
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: /opt/artifacts/vcpkg
-          vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
-          doNotCache: false
-
-      - name: Install vcpkg dependencies
-        run: |
-          if ! ./flutter/build_android_deps.sh "${{ matrix.job.android_target }}"; then
-            find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
-              echo "$_1:"
-              cat "$_1"
-            done
-            exit 1
-          fi
-        shell: bash
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-          components: "rustfmt"
-
-      - name: Build shopremote3 lib
-        env:
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
-        run: |
-          rustup target add ${{ matrix.job.target }}
-          cargo install cargo-ndk --version ${{ env.CARGO_NDK_VERSION }} --locked
-          case ${{ matrix.job.target }} in
-            aarch64-linux-android)
-              cargo ndk --platform 21 --target aarch64-linux-android build --release --features flutter,hwcodec,remote-only
-              mkdir -p ./flutter/android/app/src/main/jniLibs/arm64-v8a
-              cp ./target/${{ matrix.job.target }}/release/liblibshopremote3.so ./flutter/android/app/src/main/jniLibs/arm64-v8a/libshopremote3.so
-            ;;
-            armv7-linux-androideabi)
-              cargo ndk --platform 21 --target armv7-linux-androideabi build --release --features flutter,hwcodec,remote-only
-              mkdir -p ./flutter/android/app/src/main/jniLibs/armeabi-v7a
-              cp ./target/${{ matrix.job.target }}/release/liblibshopremote3.so ./flutter/android/app/src/main/jniLibs/armeabi-v7a/libshopremote3.so
-            ;;
-          esac
-
-      - name: Build APK
-        shell: bash
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-        run: |
-          export PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
-          sed -i "s/org.gradle.jvmargs=-Xmx1024M/org.gradle.jvmargs=-Xmx2g/g" ./flutter/android/gradle.properties
-          sed -i "s/signingConfigs.release/signingConfigs.debug/g" ./flutter/android/app/build.gradle
-          case ${{ matrix.job.target }} in
-            aarch64-linux-android)
-              mkdir -p ./flutter/android/app/src/main/jniLibs/arm64-v8a
-              cp ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ./flutter/android/app/src/main/jniLibs/arm64-v8a/
-              cp ./target/${{ matrix.job.target }}/release/liblibshopremote3.so ./flutter/android/app/src/main/jniLibs/arm64-v8a/libshopremote3.so
-              pushd flutter
-              flutter build apk --release --target lib/main_remote.dart --target-platform ${{ matrix.job.flutter_platform }} --split-per-abi
-              mv build/app/outputs/flutter-apk/app-${{ matrix.job.android_target }}-release.apk ../shopremote3-control-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
-            ;;
-            armv7-linux-androideabi)
-              mkdir -p ./flutter/android/app/src/main/jniLibs/armeabi-v7a
-              cp ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ./flutter/android/app/src/main/jniLibs/armeabi-v7a/
-              cp ./target/${{ matrix.job.target }}/release/liblibshopremote3.so ./flutter/android/app/src/main/jniLibs/armeabi-v7a/libshopremote3.so
-              pushd flutter
-              flutter build apk --release --target lib/main_remote.dart --target-platform ${{ matrix.job.flutter_platform }} --split-per-abi
-              mv build/app/outputs/flutter-apk/app-${{ matrix.job.android_target }}-release.apk ../shopremote3-control-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
-            ;;
-          esac
-          popd
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: shopremote3-control-android-${{ matrix.job.arch }}
-          path: shopremote3-control-*.apk
-
   release:
     name: Create Release
-    needs: [build-remote-windows, build-remote-macos, build-remote-linux, build-remote-android]
+    needs: [build-control-windows, build-control-macos]
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifacts
@@ -431,7 +195,7 @@ jobs:
       - name: Upload release artifacts
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: remote-${{ inputs.upload-tag }}
+          tag_name: control-${{ inputs.upload-tag }}
           files: artifacts/**/*
           draft: false
           prerelease: false
