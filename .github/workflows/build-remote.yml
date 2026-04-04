@@ -1,4 +1,4 @@
-name: ShopRemote3 Remote Build
+name: ShopRemote3 Control Build
 
 on:
   workflow_dispatch:
@@ -99,8 +99,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: shopremote3-remote-windows
-          path: shopremote3-remote-*.exe
+          name: shopremote3-control-windows
+          path: shopremote3-control-*.exe
 
   build-remote-macos:
     name: Build remote-only for macOS
@@ -181,8 +181,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: shopremote3-remote-macos-${{ matrix.job.arch }}
-          path: shopremote3-remote-*.dmg
+          name: shopremote3-control-macos-${{ matrix.job.arch }}
+          path: shopremote3-control-*.dmg
 
   build-remote-linux:
     name: Build remote-only for Linux
@@ -263,8 +263,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: shopremote3-remote-linux-x86_64
-          path: shopremote3-remote-*.deb
+          name: shopremote3-control-linux-x86_64
+          path: shopremote3-control-*.deb
 
   build-remote-android:
     name: Build remote-only for Android
@@ -398,7 +398,7 @@ jobs:
               cp ./target/${{ matrix.job.target }}/release/liblibshopremote3.so ./flutter/android/app/src/main/jniLibs/arm64-v8a/libshopremote3.so
               pushd flutter
               flutter build apk --release --target lib/main_remote.dart --target-platform ${{ matrix.job.flutter_platform }} --split-per-abi
-              mv build/app/outputs/flutter-apk/app-${{ matrix.job.android_target }}-release.apk ../shopremote3-remote-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
+              mv build/app/outputs/flutter-apk/app-${{ matrix.job.android_target }}-release.apk ../shopremote3-control-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
             ;;
             armv7-linux-androideabi)
               mkdir -p ./flutter/android/app/src/main/jniLibs/armeabi-v7a
@@ -406,7 +406,7 @@ jobs:
               cp ./target/${{ matrix.job.target }}/release/liblibshopremote3.so ./flutter/android/app/src/main/jniLibs/armeabi-v7a/libshopremote3.so
               pushd flutter
               flutter build apk --release --target lib/main_remote.dart --target-platform ${{ matrix.job.flutter_platform }} --split-per-abi
-              mv build/app/outputs/flutter-apk/app-${{ matrix.job.android_target }}-release.apk ../shopremote3-remote-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
+              mv build/app/outputs/flutter-apk/app-${{ matrix.job.android_target }}-release.apk ../shopremote3-control-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
             ;;
           esac
           popd
@@ -414,8 +414,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: shopremote3-remote-android-${{ matrix.job.arch }}
-          path: shopremote3-remote-*.apk
+          name: shopremote3-control-android-${{ matrix.job.arch }}
+          path: shopremote3-control-*.apk
 
   release:
     name: Create Release
@@ -425,7 +425,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: shopremote3-remote-*
+          pattern: shopremote3-control-*
           path: artifacts
 
       - name: Upload release artifacts

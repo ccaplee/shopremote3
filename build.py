@@ -340,7 +340,7 @@ def swap_icons(host_only=False, remote_only=False):
     print(f"  Res PNGs: swapped to {variant}")
 
     # Update macOS PRODUCT_NAME for variant
-    app_name = 'ShopRemote_host' if host_only else ('ShopRemote_remote' if remote_only else 'ShopRemote3')
+    app_name = 'ShopRemote_host' if host_only else ('ShopRemote_control' if remote_only else 'ShopRemote3')
     xcconfig = os.path.join(base, 'flutter', 'macos', 'Runner', 'Configs', 'AppInfo.xcconfig')
     if os.path.exists(xcconfig):
         with open(xcconfig, 'r') as f:
@@ -446,7 +446,7 @@ def build_flutter_deb(version, features, host_only=False, remote_only=False):
 
     system2('/bin/rm -rf tmpdeb/')
     system2('/bin/rm -rf ../res/DEBIAN/control')
-    output_name = f'shopremote3-host-%s.deb' % version if host_only else (f'shopremote3-remote-%s.deb' % version if remote_only else 'shopremote3-%s.deb' % version)
+    output_name = f'shopremote3-host-%s.deb' % version if host_only else (f'shopremote3-control-%s.deb' % version if remote_only else 'shopremote3-%s.deb' % version)
     os.rename('shopremote3.deb', f'../{output_name}')
     os.chdir("..")
 
@@ -519,7 +519,7 @@ def build_flutter_dmg(version, features, host_only=False, remote_only=False):
     entrypoint_arg = f'--target {dart_entrypoint}' if (host_only or remote_only) else ''
     system2(f'flutter build macos --release {entrypoint_arg}')
     # Determine app name based on variant
-    app_name = 'ShopRemote_host' if host_only else ('ShopRemote_remote' if remote_only else 'ShopRemote3')
+    app_name = 'ShopRemote_host' if host_only else ('ShopRemote_control' if remote_only else 'ShopRemote3')
     app_bundle = f'./build/macos/Build/Products/Release/{app_name}.app'
     system2(f'cp -rf ../target/release/service {app_bundle}/Contents/MacOS/')
     # Ad-hoc codesign the entire app bundle (fixes Team ID mismatch between
@@ -573,7 +573,7 @@ def build_flutter_windows(version, features, skip_portable_pack, host_only=False
     else:
         os.rename('./target/release/shopremote3-portable-packer.exe',
                   './shopremote3_portable.exe')
-    output_name = f'shopremote3-host-{version}.exe' if host_only else (f'shopremote3-remote-{version}.exe' if remote_only else f'shopremote3-{version}.exe')
+    output_name = f'shopremote3-host-{version}.exe' if host_only else (f'shopremote3-control-{version}.exe' if remote_only else f'shopremote3-{version}.exe')
     print(
         f'output location: {os.path.abspath(os.curdir)}/shopremote3_portable.exe')
     os.rename('./shopremote3_portable.exe', f'./{output_name}')

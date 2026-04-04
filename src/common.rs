@@ -153,7 +153,7 @@ pub fn global_init() -> bool {
     }
     #[cfg(feature = "remote-only")]
     {
-        *hbb_common::config::APP_NAME.write().unwrap() = "ShopRemote_remote".to_owned();
+        *hbb_common::config::APP_NAME.write().unwrap() = "ShopRemote_control".to_owned();
     }
     #[cfg(all(target_os = "linux", not(feature = "remote-only")))]
     {
