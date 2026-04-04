@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shopremote2/common.dart';
+import 'package:shopremote2/common/formatter/id_formatter.dart';
 import 'package:shopremote2/consts.dart';
 import 'package:shopremote2/desktop/pages/connection_page.dart';
 import 'package:shopremote2/desktop/pages/desktop_tab_page.dart';
@@ -21,6 +22,7 @@ class DesktopHomePageRemote extends StatefulWidget {
 class _DesktopHomePageRemoteState extends State<DesktopHomePageRemote>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   final _scrollController = ScrollController();
+  final _idController = IDTextEditingController();
   Timer? _updateTimer;
 
   @override
@@ -30,12 +32,20 @@ class _DesktopHomePageRemoteState extends State<DesktopHomePageRemote>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Register the ID controller for use by connect() in common.dart
+    if (!Get.isRegistered<IDTextEditingController>()) {
+      Get.put<IDTextEditingController>(_idController);
+    }
+    if (!Get.isRegistered<TextEditingController>()) {
+      Get.put<TextEditingController>(_idController);
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _updateTimer?.cancel();
+    _idController.dispose();
     super.dispose();
   }
 
@@ -138,17 +148,17 @@ class _DesktopHomePageRemoteState extends State<DesktopHomePageRemote>
           ),
           SizedBox(height: 8),
           TextField(
+            controller: _idController,
+            inputFormatters: [IDTextInputFormatter()],
             decoration: InputDecoration(
-              hintText: "e.g., 123456789",
+              hintText: "e.g., 123 456 789",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
               contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             ),
             onSubmitted: (value) {
-              if (value.isNotEmpty) {
-                _connectToRemote(value);
-              }
+              _onConnect();
             },
           ),
           SizedBox(height: 12),
@@ -158,10 +168,11 @@ class _DesktopHomePageRemoteState extends State<DesktopHomePageRemote>
               style: ElevatedButton.styleFrom(
                 backgroundColor: MyTheme.getPrimaryColor(),
               ),
-              onPressed: () {
-                // Handle connect action
-              },
-              child: Text(translate("Connect")),
+              onPressed: _onConnect,
+              child: Text(
+                translate("Connect"),
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
@@ -265,8 +276,9 @@ class _DesktopHomePageRemoteState extends State<DesktopHomePageRemote>
     );
   }
 
-  void _connectToRemote(String id) {
-    // TODO: Implement connection logic
-    debugPrint("Connecting to remote: $id");
+  void _onConnect({bool isFileTransfer = false}) {
+    final id = _idController.id;
+    if (id.isEmpty) return;
+    connect(context, id, isFileTransfer: isFileTransfer);
   }
 }
