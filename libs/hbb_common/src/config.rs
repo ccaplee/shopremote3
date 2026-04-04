@@ -916,21 +916,20 @@ impl Config {
             let mut id = 0u32;
             match mac_address::get_mac_address() {
                 Ok(Some(ma)) => {
-                    eprintln!("[ShopRemote3] get_auto_id: MAC address: {:?}", ma);
+                    log::info!("[ShopRemote3] get_auto_id: MAC address: {:?}", ma);
                     for x in &ma.bytes()[2..] {
                         id = (id << 8) | (*x as u32);
                     }
                     id &= 0x1FFFFFFF;
-                    eprintln!("[ShopRemote3] get_auto_id: Generated id {}", id);
-                    log::info!("Generated id {}", id);
+                    log::info!("[ShopRemote3] get_auto_id: Generated id {}", id);
                     Some(id.to_string())
                 }
                 Ok(None) => {
-                    eprintln!("[ShopRemote3] get_auto_id: MAC address returned None!");
+                    log::info!("[ShopRemote3] get_auto_id: MAC address returned None!");
                     None
                 }
                 Err(e) => {
-                    eprintln!("[ShopRemote3] get_auto_id: MAC address error: {:?}", e);
+                    log::info!("[ShopRemote3] get_auto_id: MAC address error: {:?}", e);
                     None
                 }
             }
@@ -1067,15 +1066,15 @@ impl Config {
 
     pub fn get_id() -> String {
         let mut id = CONFIG.read().unwrap().id.clone();
-        eprintln!("[ShopRemote3] Config::get_id() stored id: '{}'", id);
+        log::info!("[ShopRemote3] Config::get_id() stored id: '{}'", id);
         if id.is_empty() {
-            eprintln!("[ShopRemote3] Config::get_id() id empty, calling gen_id()...");
+            log::info!("[ShopRemote3] Config::get_id() id empty, calling gen_id()...");
             if let Some(tmp) = Config::gen_id() {
-                eprintln!("[ShopRemote3] Config::get_id() gen_id returned: '{}'", tmp);
+                log::info!("[ShopRemote3] Config::get_id() gen_id returned: '{}'", tmp);
                 id = tmp;
                 Config::set_id(&id);
             } else {
-                eprintln!("[ShopRemote3] Config::get_id() gen_id returned None!");
+                log::info!("[ShopRemote3] Config::get_id() gen_id returned None!");
             }
         }
         id

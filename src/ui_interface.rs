@@ -96,12 +96,12 @@ pub fn get_id() -> String {
     {
         let id = ipc::get_id();
         if id.is_empty() {
-            eprintln!("[ShopRemote3] get_id: ipc returned empty, trying Config::get_id() directly");
+            log::info!("[ShopRemote3] get_id: ipc returned empty, trying Config::get_id() directly");
             let config_id = Config::get_id();
-            eprintln!("[ShopRemote3] get_id: Config::get_id() returned: '{}'", config_id);
+            log::info!("[ShopRemote3] get_id: Config::get_id() returned: '{}'", config_id);
             return config_id;
         }
-        eprintln!("[ShopRemote3] get_id: ipc returned: '{}'", id);
+        log::info!("[ShopRemote3] get_id: ipc returned: '{}'", id);
         return id;
     }
 }

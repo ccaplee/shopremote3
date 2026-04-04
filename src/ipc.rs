@@ -1256,10 +1256,10 @@ pub fn clear_trusted_devices() {
 }
 
 pub fn get_id() -> String {
-    eprintln!("[ShopRemote3] ipc::get_id() called, trying IPC get_config(\"id\")...");
+    log::info!("[ShopRemote3] ipc::get_id() called, trying IPC get_config(\"id\")...");
     match get_config("id") {
         Ok(Some(v)) => {
-            eprintln!("[ShopRemote3] ipc::get_id() IPC returned id: '{}'", v);
+            log::info!("[ShopRemote3] ipc::get_id() IPC returned id: '{}'", v);
             // update salt also, so that next time reinstallation not causing first-time auto-login failure
             if let Ok(Some(v2)) = get_config("salt") {
                 Config::set_salt(&v2);
@@ -1271,11 +1271,11 @@ pub fn get_id() -> String {
             v
         }
         Ok(None) => {
-            eprintln!("[ShopRemote3] ipc::get_id() IPC returned None, fallback to Config::get_id()");
+            log::info!("[ShopRemote3] ipc::get_id() IPC returned None, fallback to Config::get_id()");
             Config::get_id()
         }
         Err(e) => {
-            eprintln!("[ShopRemote3] ipc::get_id() IPC error: {:?}, fallback to Config::get_id()", e);
+            log::info!("[ShopRemote3] ipc::get_id() IPC error: {:?}, fallback to Config::get_id()", e);
             Config::get_id()
         }
     }
