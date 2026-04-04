@@ -1047,6 +1047,7 @@ impl Client {
                 }
 
                 if let Some(msg) = crate::clipboard::get_clipboards_msg(true) {
+                    #[cfg(not(feature = "host-only"))]
                     crate::flutter::send_clipboard_msg(msg, false);
                 }
 
