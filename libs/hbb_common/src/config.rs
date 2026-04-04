@@ -107,7 +107,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["ai.ilv.co.kr"];
-pub const RS_PUB_KEY: &str = "dfqFDvOl5RvM8gfY4Nb2eUoYubr9m444DBBMB+1fTEIjYAAunduNzy/pHWax/oA+DGxIp84fWL7jSY56CEP2kQ==";
+pub const RS_PUB_KEY: &str = "I2AALp3bjc8v6R1msf6APgxsSKfOH1i+40mOeghD9pE=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
