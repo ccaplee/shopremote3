@@ -268,9 +268,10 @@ jobs:
     needs: [build-host-windows, build-host-macos, build-host-linux]
     runs-on: ubuntu-latest
     steps:
-      - name: Download all artifacts
+      - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
+          pattern: shopremote3-host-*
           path: artifacts
 
       - name: Upload release artifacts
